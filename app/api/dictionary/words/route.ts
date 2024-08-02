@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import statusCodes from 'http-status-codes'
 import qs from 'qs'
 import { z, ZodError } from 'zod'
+import path from 'path'
 
 const DEFAULT_PAGE = 1,
   DEFAULT_PAGE_SIZE = 25
@@ -37,8 +38,9 @@ async function processLineByLine(params: z.infer<typeof schema>) {
   return new Promise((resolve, reject) => {
     try {
       let list: string[] = []
+      let wordsPath = path.join(process.cwd(), 'lib/data/words_alpha.txt')
       const lineReader = readline.createInterface({
-        input: fs.createReadStream('lib/data/words_alpha.txt', {
+        input: fs.createReadStream(wordsPath, {
           encoding: 'utf-8',
         }),
       })
