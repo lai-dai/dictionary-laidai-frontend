@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { nextApi } from '@/lib/api'
 import { ResFind } from '@/lib/types/common'
 import { Spinner } from '@/components/ui/spinner'
 import { getErrorMessage } from '@/lib/utils/error-message'
@@ -88,7 +88,7 @@ function WordList(props: {
   const searchData = useInfiniteQuery({
     queryKey: ['/api/dictionary/words', props.q],
     queryFn: (ctx) =>
-      api.get<ResFind<string[]>>('/api/dictionary/words', {
+      nextApi.get<ResFind<string[]>>('/api/dictionary/words', {
         params: {
           q: props.q,
           page: ctx.pageParam,
