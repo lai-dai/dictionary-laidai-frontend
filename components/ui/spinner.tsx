@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { VariantProps, cva } from 'class-variance-authority'
 import { Slot } from '@radix-ui/react-slot'
 
-const spinnerVariants = cva('relative', {
+const spinnerVariants = cva('relative inline-block', {
   variants: {
     isSpinning: {
       true: 'block',
@@ -16,7 +16,7 @@ const spinnerVariants = cva('relative', {
   },
 })
 
-const loaderVariants = cva('animate-spin', {
+const loaderVariants = cva('animate-spin inline-block', {
   variants: {
     size: {
       xs: 'size-4',

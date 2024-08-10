@@ -13,14 +13,14 @@ const schema = z.object({
   q: z.string().min(1, 'at least 1 letter'),
   page: z
     .number()
-    .or(z.string().regex(/^\d+$/, { message: 'number' }).transform(Number))
+    .or(z.string().regex(/^\d+$/, 'number').transform(Number))
     .default(DEFAULT_PAGE)
-    .refine((n) => n > 0, { message: 'greater than 0' }),
+    .refine((n) => n > 0, 'greater than 0'),
   pageSize: z
     .number()
-    .or(z.string().regex(/^\d+$/, { message: 'number' }).transform(Number))
+    .or(z.string().regex(/^\d+$/, 'number').transform(Number))
     .default(DEFAULT_PAGE_SIZE)
-    .refine((n) => n > 0, { message: 'greater than 0' }),
+    .refine((n) => n > 0, 'greater than 0'),
 })
 
 function getListPage(data: any[], page: number, pageSize: number) {
@@ -59,7 +59,7 @@ async function processLineByLine(params: z.infer<typeof schema>) {
           pagination: {
             page,
             pageSize,
-            pageCount: total ? Math.floor(total / pageSize) : 1,
+            pageCount: total > pageSize ? Math.floor(total / pageSize) : 1,
             total,
           },
         })

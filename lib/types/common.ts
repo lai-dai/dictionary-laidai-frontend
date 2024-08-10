@@ -1,6 +1,6 @@
 export type ResFind<TList> = {
   status: boolean
-  data?: {
+  data: {
     list: TList
     pagination: {
       page: number
@@ -10,5 +10,10 @@ export type ResFind<TList> = {
     }
   }
   message: string
-  details?: { message: string }[]
+}
+
+export type ResFindOne<TData> = {
+  status: boolean
+  data: TData
+  message: string
 }
