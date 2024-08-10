@@ -1,6 +1,12 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -53,16 +59,18 @@ export function WordsInput(props: {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value || 'Select words...'}
+          {value || 'Select words'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder="Search words..."
+            placeholder="Search words"
             value={q}
             onValueChange={setQ}
+            autoCapitalize="off"
+            inputMode="search"
           />
           <WordList
             q={q}
@@ -106,9 +114,8 @@ function WordList(props: {
     enabled: Boolean(props.q),
   })
 
-  const flatData = useMemo(() => {
-    return searchData.data?.pages.flatMap((page) => page.data?.list || []) || []
-  }, [searchData.data])
+  const flatData =
+    searchData.data?.pages.flatMap((page) => page.data?.list || []) || []
 
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
@@ -146,7 +153,7 @@ function WordList(props: {
             : undefined,
       }}
     >
-      <CommandList>
+      <CommandList className="h-svh">
         {!props.q ? (
           <Message className="text-center py-6 px-3">
             Let&apos;s search word
@@ -158,8 +165,8 @@ function WordList(props: {
             {getErrorMessage(searchData.error)}
           </Message.Error>
         ) : (
-          <>
-            <CommandEmpty>No framework found.</CommandEmpty>
+          <Fragment>
+            <CommandEmpty>No words found</CommandEmpty>
             <VirtualizerContent asChild>
               <CommandGroup>
                 <VirtualizerTrack>
@@ -192,7 +199,7 @@ function WordList(props: {
                 </VirtualizerTrack>
               </CommandGroup>
             </VirtualizerContent>
-          </>
+          </Fragment>
         )}
       </CommandList>
     </Virtualizer>
