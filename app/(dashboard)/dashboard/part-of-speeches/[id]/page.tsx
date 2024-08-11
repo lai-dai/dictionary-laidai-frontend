@@ -11,13 +11,16 @@ import { API_INPUTS } from '@/lib/constants/api-input'
 
 export default async function Page({ params }: { params: { id: string } }) {
   const queryClient = getQueryClient()
-  await queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.partOfSpeeches, params.id],
-    queryFn: () =>
-      serverApiWithToken.get<ResFindOne<PartOfSpeechType>>(
-        API_INPUTS.partOfSpeeches + `/${params.id}`
-      ),
-  })
+
+  if (!Number.isNaN(+params.id)) {
+    await queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.partOfSpeeches, params.id],
+      queryFn: () =>
+        serverApiWithToken.get<ResFindOne<PartOfSpeechType>>(
+          API_INPUTS.partOfSpeeches + `/${params.id}`
+        ),
+    })
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
