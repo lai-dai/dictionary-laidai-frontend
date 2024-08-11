@@ -9,7 +9,7 @@ import { getLocale, getMessages } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
 import { siteConfig } from '@/config/site'
 import { Toaster } from '@/components/ui/sonner'
-import { DeviceDetectProvider } from '@/components/ui/device-detect/server'
+import { DeviceDetectProvider } from '@/components/device-detect/server'
 
 export const metadata: Metadata = {
   title: {

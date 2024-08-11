@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { ReactNode, useMemo, useState } from 'react'
 import {
   DataTable,
   Table,
@@ -12,30 +12,16 @@ import {
   TableRow,
   TableRowsEmpty,
   TableRowsTrack,
-  useDataTableContext,
 } from '@/components/ui/data-table'
 
 import {
   ColumnDef,
   ColumnOrderState,
+  RowSelectionState,
   VisibilityState,
 } from '@tanstack/react-table'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
-import { Check, Edit2, Plus, Settings2, Trash } from 'lucide-react'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from '@/components/ui/command'
-import { cn } from '@/lib/utils'
+import { Edit2, Plus, RotateCcw, Trash } from 'lucide-react'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -60,20 +46,69 @@ import {
 } from '@/components/ui/responsive-dialog'
 import { toast } from 'sonner'
 import { API_INPUTS } from '@/lib/constants/api-input'
+import { Checkbox } from '@/components/ui/checkbox'
+import qs from 'qs'
+import { TableColumnVisible } from '@/components/table-column-visible'
+import { TablePagination } from '@/components/table-pagination'
+import { URL_STATE_RESET, useUrlState } from '@/lib/hooks/use-url-state'
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/lib/constants/common'
+import { FacetedFilter } from '@/components/faceted-flter'
+import { isObjectEquals } from '@/lib/utils/is-object-equals'
+import { SearchInput } from '@/components/ui/search-input'
+
+const initFilters = {
+  name: '',
+  order: '',
+  page: DEFAULT_PAGE,
+  limit: DEFAULT_PAGE_SIZE,
+}
 
 export function PageDataTable() {
   const pathname = usePathname()
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    updatedAt: false,
+    description: false,
+  })
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
-
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [filters, setFilters] = useUrlState(initFilters)
   const searchData = useQuery({
-    queryKey: [QUERY_KEYS.partOfSpeeches],
+    queryKey: [QUERY_KEYS.partOfSpeeches, filters],
     queryFn: () =>
-      apiWithToken.get<ResFind<PartOfSpeechType[]>>('/partOfSpeeches'),
+      apiWithToken.get<ResFind<PartOfSpeechType[]>>('/partOfSpeeches', {
+        params: filters,
+      }),
   })
 
   const columns = useMemo<ColumnDef<PartOfSpeechType>[]>(() => {
     return [
+      {
+        id: 'select',
+        header: ({ table }) => (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+            className="translate-y-0.5"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+            className="translate-y-0.5"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+        size: 30,
+      },
       {
         accessorKey: 'id',
         header: 'ID',
@@ -82,13 +117,23 @@ export function PageDataTable() {
       {
         accessorKey: 'name',
         header: 'Name',
-        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'abbreviation',
+        header: 'Name',
+      },
+      {
+        accessorKey: 'translate',
+        header: 'Name',
       },
       {
         accessorKey: 'description',
         header: 'Description',
         cell: (info) => (
-          <p className="line-clamp-2">{info.getValue<string>()}</p>
+          <div
+            className="line-clamp-2 prose prose-slate dark:prose-invert prose-sm"
+            dangerouslySetInnerHTML={{ __html: info.getValue<string>() }}
+          ></div>
         ),
       },
       {
@@ -134,7 +179,15 @@ export function PageDataTable() {
                 onSubmitSuccess={() => {
                   searchData.refetch()
                 }}
-              />
+              >
+                <Button
+                  variant={'destructive'}
+                  size={'icon'}
+                  className="size-6"
+                >
+                  <Trash className="size-3" />
+                </Button>
+              </DeleteDataDialog>
             </div>
           )
         },
@@ -154,138 +207,148 @@ export function PageDataTable() {
         state: {
           columnVisibility,
           columnOrder,
+          rowSelection,
         },
         onColumnVisibilityChange: setColumnVisibility,
         onColumnOrderChange: setColumnOrder,
+        onRowSelectionChange: setRowSelection,
       }}
     >
-      <div className="space-y-6">
-        <div className="flex justify-end gap-3">
-          <Button variant="outline" size={'sm'} asChild>
-            <Link
-              href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
-            >
-              <Plus className="size-4 mr-3" />
-              New PoS
-            </Link>
-          </Button>
+      {(table) => (
+        <div className="space-y-6">
+          <div className="flex w-full items-center justify-between gap-2 overflow-auto">
+            <div className="flex flex-1 items-center gap-2">
+              <SearchInput
+                placeholder={'Search name'}
+                defaultValue={filters.name}
+                onSearchChange={(name) => {
+                  setFilters({ name })
+                }}
+                className="h-8 w-40 lg:w-64"
+              />
 
-          <ColumnVisible />
-        </div>
+              <FacetedFilter
+                value={filters.order}
+                title="Sort"
+                onValueChange={(order) => {
+                  setFilters({ order })
+                }}
+                options={[
+                  {
+                    label: 'DESC',
+                    value: 'DESC',
+                  },
+                  {
+                    label: 'ASC',
+                    value: 'ASC',
+                  },
+                ]}
+              />
 
-        <ScrollArea className="size-full border rounded-md">
-          <Table>
-            <TableHeader>
-              {(headerGroup) => (
-                <TableHeaderRow headerGroup={headerGroup}>
-                  {(header) => <TableHead header={header} />}
-                </TableHeaderRow>
+              {!isObjectEquals(filters, initFilters) && (
+                <Button
+                  onClick={() => setFilters(URL_STATE_RESET)}
+                  variant={'outline'}
+                  size={'sm'}
+                >
+                  <RotateCcw className="mr-2 size-4" /> Reset
+                </Button>
               )}
-            </TableHeader>
+            </div>
 
-            <TableBody>
-              <TableRowsEmpty>
-                {searchData.status === 'pending' ? (
-                  <div className="flex justify-center">
-                    <Spinner className="mx-auto" />
-                  </div>
-                ) : searchData.status === 'error' ? (
-                  <Message.Error className="text-center">
-                    {getErrorMessage(searchData.error)}
-                  </Message.Error>
-                ) : (
-                  <Message className="text-center">Not result</Message>
-                )}
-              </TableRowsEmpty>
+            <div className="flex justify-end gap-2">
+              {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+                <DeleteDataDialog
+                  data={table
+                    .getFilteredSelectedRowModel()
+                    .rows.map((row) => row.original)}
+                  onSubmitSuccess={() => {
+                    searchData.refetch()
+                    table.toggleAllRowsSelected(false)
+                  }}
+                >
+                  <Button variant={'destructive'} size={'sm'}>
+                    <Trash className="size-3 mr-2" aria-hidden="true" />
+                    Delete ({table.getFilteredSelectedRowModel().rows.length})
+                  </Button>
+                </DeleteDataDialog>
+              ) : null}
 
-              <TableRowsTrack>
-                {(row) => (
-                  <TableRow row={row}>
-                    {(cell) => <TableCell cell={cell} />}
-                  </TableRow>
+              <Button variant="outline" size={'sm'} asChild>
+                <Link
+                  href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
+                >
+                  <Plus className="size-4 mr-2" />
+                  New PoS
+                </Link>
+              </Button>
+
+              <TableColumnVisible />
+            </div>
+          </div>
+
+          <ScrollArea className="size-full border rounded-md">
+            <Table>
+              <TableHeader>
+                {(headerGroup) => (
+                  <TableHeaderRow headerGroup={headerGroup}>
+                    {(header) => <TableHead header={header} />}
+                  </TableHeaderRow>
                 )}
-              </TableRowsTrack>
-            </TableBody>
-          </Table>
-          <ScrollBar orientation="horizontal" className="h-3.5 z-[1]" />
-        </ScrollArea>
-      </div>
+              </TableHeader>
+
+              <TableBody>
+                <TableRowsEmpty>
+                  {searchData.status === 'pending' ? (
+                    <div className="flex justify-center">
+                      <Spinner className="mx-auto" />
+                    </div>
+                  ) : searchData.status === 'error' ? (
+                    <Message.Error className="text-center">
+                      {getErrorMessage(searchData.error)}
+                    </Message.Error>
+                  ) : (
+                    <Message className="text-center">Not result</Message>
+                  )}
+                </TableRowsEmpty>
+
+                <TableRowsTrack>
+                  {(row) => (
+                    <TableRow row={row}>
+                      {(cell) => <TableCell cell={cell} />}
+                    </TableRow>
+                  )}
+                </TableRowsTrack>
+              </TableBody>
+            </Table>
+            <ScrollBar orientation="horizontal" className="h-3.5 z-[1]" />
+          </ScrollArea>
+
+          <TablePagination
+            onPageChange={(page) => {
+              setFilters({ page })
+            }}
+            onPageSizeChange={(limit) => {
+              setFilters({ limit })
+            }}
+            page={filters.page}
+            pageSize={filters.limit}
+            total={searchData.data?.data.pagination.total}
+          />
+        </div>
+      )}
     </DataTable>
   )
 }
 
-function ColumnVisible() {
-  const [open, setOpen] = useState(false)
-  const table = useDataTableContext()
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          size={'sm'}
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="justify-between"
-        >
-          <Settings2 className="size-4 mr-2 shrink-0" />
-          View
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-52 p-0">
-        <Command shouldFilter={false}>
-          <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
-              <CommandItem
-                onSelect={() => {
-                  table.toggleAllColumnsVisible()
-                }}
-              >
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    table.getIsAllColumnsVisible() ? 'opacity-100' : 'opacity-0'
-                  )}
-                />
-                Toggle All
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup>
-              {table.getAllLeafColumns().map((column) => {
-                return (
-                  <CommandItem
-                    key={column.id}
-                    value={column.id}
-                    onSelect={() => {
-                      column.toggleVisibility()
-                    }}
-                    disabled={!column.getCanHide()}
-                  >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        column.getIsVisible() ? 'opacity-100' : 'opacity-0'
-                      )}
-                    />
-                    {column.columnDef.meta?.columnName || column.id}
-                  </CommandItem>
-                )
-              })}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  )
-}
-
-export function DeleteDataDialog({
+function DeleteDataDialog({
   data,
   onSubmitSuccess,
+  children,
 }: {
-  data: PartOfSpeechType
+  data: PartOfSpeechType | PartOfSpeechType[]
   onSubmitSuccess?: () => void
+  children?: ReactNode
 }) {
   const [open, setOpen] = useState(false)
   const deleteData = useMutation({
@@ -297,7 +360,14 @@ export function DeleteDataDialog({
 
   const onDelete = async () => {
     try {
-      const res = await deleteData.mutateAsync(data.id)
+      let id
+      if (Array.isArray(data)) {
+        const ids = data.map((e) => e.id)
+        id = qs.stringify({ ids })
+      } else {
+        id = data.id
+      }
+      const res = await deleteData.mutateAsync(id)
 
       setOpen(false)
       toast.success(res.message)
@@ -309,11 +379,7 @@ export function DeleteDataDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant={'destructive'} size={'icon'} className="size-6">
-          <Trash className="size-3" />
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent>
         <DialogHeader>

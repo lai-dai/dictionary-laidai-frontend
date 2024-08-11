@@ -33,6 +33,7 @@ import { PartOfSpeechType } from '@/lib/types/part-of-speeches'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
 import { TextareaAutoSize } from '@/components/ui/textarea-auto-size'
 import { NumericInput } from '@/components/ui/numeric-input'
+import { TinyEditor } from '@/components/tiny-editor'
 
 export function PageForm({
   isCreateData,
@@ -65,8 +66,10 @@ export function PageForm({
   const form = useForm({
     defaultValues: {
       name: searchData.data?.data.name || '',
-      description: searchData.data?.data.description || '',
       order: searchData.data?.data.order || (total ? total + 1 : 1),
+      abbreviation: searchData.data?.data.abbreviation || '',
+      translate: searchData.data?.data.translate || '',
+      description: searchData.data?.data.description || '',
     },
     validatorAdapter: zodValidator(),
     onSubmit: async ({ value }) => {
@@ -138,9 +141,61 @@ export function PageForm({
             </form.Field>
 
             <form.Field
+              name="abbreviation"
+              validators={{
+                onChange: z.string(),
+              }}
+            >
+              {(field) => (
+                <FormItem field={field}>
+                  <FormLabel>
+                    Abbreviation:{' '}
+                    {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            </form.Field>
+
+            <form.Field
+              name="translate"
+              validators={{
+                onChange: z.string(),
+              }}
+            >
+              {(field) => (
+                <FormItem field={field}>
+                  <FormLabel>
+                    Translate:{' '}
+                    {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            </form.Field>
+
+            <form.Field
               name="order"
               validators={{
-                onChange: z.number().min(1, 'greater than 1').optional(),
+                onChange: z.number().min(1, 'greater than 1'),
               }}
             >
               {(field) => (
@@ -180,12 +235,18 @@ export function PageForm({
                     {field.state.meta.isValidating && <Spinner size={'xs'} />}
                   </FormLabel>
                   <FormControl>
-                    <TextareaAutoSize
+                    <TinyEditor
+                      textareaName={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onEditorChange={(value) => field.handleChange(value)}
+                    />
+                    {/* <TextareaAutoSize
                       name={field.name}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
-                    />
+                    /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
