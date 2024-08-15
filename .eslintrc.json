@@ -5,7 +5,7 @@
     "plugin:tailwindcss/recommended",
     "prettier"
   ],
-  "plugins": ["prettier", "@typescript-eslint"],
+  "plugins": ["prettier"],
   "ignorePatterns": ["dist", "node_modules", "public", "src/tinymce"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
