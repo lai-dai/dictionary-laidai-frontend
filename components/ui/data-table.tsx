@@ -26,6 +26,7 @@ import {
   Row,
   Cell,
   RowData,
+  getPaginationRowModel,
 } from '@tanstack/react-table'
 
 import { cn } from '@/lib/utils'
@@ -290,7 +291,7 @@ export const TableCell = forwardRef<
       className={cn(
         'p-2 align-middle [&:has([role=checkbox])]:pr-0',
         cell.column.getIsPinned() &&
-          'bg-background group-hover:bg-muted/50 data-[state=selected]:bg-muted',
+          'bg-background group-hover:bg-muted/50 group-data-[state=selected]:bg-muted',
         className
       )}
       {...props}

@@ -45,7 +45,7 @@ export function CollapseMenuButton({
       <div
         className={cn(
           buttonVariants({ variant: active ? 'secondary' : 'ghost' }),
-          'w-full justify-start h-10'
+          'w-full justify-start h-10 mb-1'
         )}
       >
         <Link

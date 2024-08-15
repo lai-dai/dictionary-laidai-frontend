@@ -1,4 +1,6 @@
-export type ResFind<TList> = {
+import React from 'react'
+
+export interface ResFind<TList> {
   status: boolean
   data: {
     list: TList
@@ -12,8 +14,14 @@ export type ResFind<TList> = {
   message: string
 }
 
-export type ResFindOne<TData> = {
+export interface ResFindOne<TData> {
   status: boolean
   data: TData
   message: string
+}
+
+export interface Option {
+  label: string
+  value: string
+  icon?: React.ComponentType<{ className?: string }>
 }

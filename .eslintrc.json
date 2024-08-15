@@ -5,8 +5,8 @@
     "plugin:tailwindcss/recommended",
     "prettier"
   ],
-  "plugins": ["prettier", "@typescript-eslint"],
-  "ignorePatterns": ["dist", "node_modules", "public"],
+  "plugins": ["prettier"],
+  "ignorePatterns": ["dist", "node_modules", "public", "src/tinymce"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],

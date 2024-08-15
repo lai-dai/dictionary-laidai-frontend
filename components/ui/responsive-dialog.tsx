@@ -1,6 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { isDesktop } from '@/components/ui/device-detect'
+import { isDesktop } from '@/components/device-detect'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Drawer as DrawerPrimitive } from 'vaul'
 import { Cross2Icon } from '@radix-ui/react-icons'

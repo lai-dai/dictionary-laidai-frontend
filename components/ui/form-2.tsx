@@ -1,58 +1,60 @@
 import { Slot } from '@radix-ui/react-slot'
 import * as LabelPrimitive from '@radix-ui/react-label'
-import { Validator, FieldApi, FormApi } from '@tanstack/react-form'
+import {
+  Validator,
+  FieldApi,
+  FormApi,
+  ReactFormApi,
+} from '@tanstack/react-form'
 import {
   ComponentPropsWithoutRef,
   ElementRef,
   HTMLAttributes,
   ReactNode,
-  createContext,
   forwardRef,
-  useContext,
   useId,
 } from 'react'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { createContext } from '@/lib/utils/create-context'
 
-const FormContext = createContext<FormApi<any, any> | null>(null)
-
-export function useFormContext<
-  TFormData = any,
-  TFormValidator extends Validator<TFormData, unknown> | undefined = undefined,
->() {
-  const context = useContext(FormContext)
-  if (!context) throw new Error('useFormContext should be used within <Form>')
-
-  return context as FormApi<TFormData, TFormValidator>
-}
+export const [FormProvider, useFormContext] = createContext<
+  FormApi<any, Validator<any>> & ReactFormApi<any, Validator<any>>
+>(undefined, {
+  errorMessage: 'useFormContext should be used within <Form>',
+})
 
 export function Form({
   form,
   children,
 }: {
-  form: FormApi<any, any>
+  form: FormApi<any, Validator<any>> & ReactFormApi<any, Validator<any>>
   children: ReactNode
 }) {
-  return <FormContext.Provider value={form}>{children}</FormContext.Provider>
+  return <FormProvider value={form}>{children}</FormProvider>
 }
 
-const FormItemContext = createContext<FieldApi<any, any, any, any> | null>(null)
+export const [FormItemProvider, useFormFieldContext] = createContext<
+  FieldApi<any, any, any, any, any>
+>(undefined, {
+  errorMessage: 'useFormFieldContext should be used within <FormItem>',
+})
 
 export const FormItem = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement> & {
-    field: FieldApi<any, any, any, any>
+    field: FieldApi<any, any, any, any, any>
   }
 >(function FormItem({ className, field, style, ...props }, ref) {
   return (
-    <FormItemContext.Provider value={field}>
+    <FormItemProvider value={field}>
       <div ref={ref} className={cn('space-y-2', className)} {...props} />
-    </FormItemContext.Provider>
+    </FormItemProvider>
   )
 })
 
 export function useFormItem() {
-  const context = useContext(FormItemContext)
+  const context = useFormFieldContext()
   const id = useId()
   if (!context) throw new Error('useFormItem should be used within <FormItem>')
   return {
