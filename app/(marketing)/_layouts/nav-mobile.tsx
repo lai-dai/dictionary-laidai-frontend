@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { menu_list } from './nav-main'
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)
@@ -59,8 +60,21 @@ export function MobileNav() {
           <Logo className="mr-2 h-4 w-4" />
           <span className="font-bold">{siteConfig.name}</span>
         </MobileLink>
-        <div className="my-4 h-[calc(100vh-8rem)] overflow-y-auto pb-10 pl-6">
-          <Link href={'/'}>My link</Link>
+        <div className="my-4 h-[calc(100vh-8rem)] overflow-y-auto pb-10">
+          <ul className="grid gap-3 p-4">
+            {menu_list.map((item) => (
+              <Button
+                key={item.title}
+                variant={'ghost'}
+                asChild
+                className="justify-start"
+              >
+                <MobileLink onOpenChange={setOpen} href={item.href}>
+                  {item.title}
+                </MobileLink>
+              </Button>
+            ))}
+          </ul>
         </div>
       </SheetContent>
     </Sheet>

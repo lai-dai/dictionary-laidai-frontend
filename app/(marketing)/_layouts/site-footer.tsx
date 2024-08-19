@@ -12,7 +12,7 @@ export function SiteFooter() {
             <a
               href={siteConfig.links.website}
               target="_blank"
-              // rel="noreferrer"
+              rel="noreferrer"
               className="font-medium underline underline-offset-4"
             >
               {siteConfig.author}

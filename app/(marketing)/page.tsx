@@ -1,78 +1,98 @@
 import { MarketingPageContainer } from '@/components/page-container'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { siteConfig } from '@/config/site'
+import Link from 'next/link'
 
 export default function Page() {
   return (
     <MarketingPageContainer asChild>
-      <main className="flex-1 flex flex-col items-center justify-between">
-        <div className="grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className="mb-3 text-2xl font-semibold">
-              Docs{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                -&gt;
-              </span>
-            </h2>
-            <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
+      <main className="flex-1 space-y-6">
+        <Card className="py-14">
+          <CardHeader className="text-center">
+            <h1 className="text-2xl font-semibold">
+              Chào mừng bạn đến với {siteConfig.name}
+            </h1>
+          </CardHeader>
+          <CardFooter className="justify-center">
+            <Button asChild>
+              <Link href={'/dictionary'}>Tra từ điển</Link>
+            </Button>
+          </CardFooter>
+        </Card>
 
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className="mb-3 text-2xl font-semibold">
-              Learn{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                -&gt;
-              </span>
-            </h2>
-            <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">
+              Tài nguyên {siteConfig.name}
+            </CardTitle>
+          </CardHeader>
 
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className="mb-3 text-2xl font-semibold">
-              Templates{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                -&gt;
-              </span>
-            </h2>
-            <p className="m-0 max-w-[30ch] text-sm opacity-50">
-              Explore starter templates for Next.js.
-            </p>
-          </a>
+          <CardContent className="grid md:grid-cols-2 gap-6">
+            <Button
+              variant={'outline'}
+              asChild
+              className="h-auto flex-col justify-start items-start whitespace-normal"
+            >
+              <Link href={'/idioms'}>
+                <h2 className="mb-3 text-xl font-semibold">Idioms</h2>
+                <p className="m-0 text-sm opacity-50">
+                  Thành ngữ là những từ không nhằm mục đích để hiểu theo nghĩa
+                  thông thường
+                </p>
+              </Link>
+            </Button>
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className="mb-3 text-2xl font-semibold">
-              Deploy{' '}
-              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                -&gt;
-              </span>
-            </h2>
-            <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-              Instantly deploy your Next.js site to a shareable URL with Vercel.
-            </p>
-          </a>
-        </div>
+            <Button
+              variant={'outline'}
+              asChild
+              className="h-auto flex-col justify-start items-start whitespace-normal"
+            >
+              <Link href={'/examples'}>
+                <h2 className="mb-3 text-xl font-semibold">Examples</h2>
+                <p className="m-0 text-sm opacity-50">Tra câu tiếng anh</p>
+              </Link>
+            </Button>
+
+            <Button
+              variant={'outline'}
+              asChild
+              className="h-auto flex-col justify-start items-start whitespace-normal"
+            >
+              <Link href={'/part-of-speeches'}>
+                <h2 className="mb-3 text-xl font-semibold">Part-of-Speeches</h2>
+                <p className="m-0 text-sm opacity-50">
+                  Từ loại là một hạng mục từ có các thuộc tính ngữ pháp giống
+                  nhau
+                </p>
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Top {siteConfig.name}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-2 gap-6">
+            <Button
+              variant={'outline'}
+              asChild
+              className="h-auto flex-col justify-start items-start whitespace-normal"
+            >
+              <Link href={'/top-word'}>
+                <h2 className="mb-3 text-xl font-semibold">Top word</h2>
+                <p className="m-0 text-sm opacity-50">Từ được xem nhiều nhất</p>
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </main>
     </MarketingPageContainer>
   )

@@ -9,4 +9,5 @@ export const QUERY_KEYS = {
   idioms: '/idioms',
   comments: '/comments',
   phonetics: '/phonetics',
+  word: '/word',
 }

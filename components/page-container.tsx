@@ -12,7 +12,7 @@ export const MarketingPageContainer = forwardRef<
   return (
     <Comp
       ref={ref}
-      className={cn('container max-w-5xl', className)}
+      className={cn('container max-w-5xl py-14 flex-1', className)}
       {...props}
     />
   )

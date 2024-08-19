@@ -44,7 +44,8 @@ export default function Page({ params }: { params: { id: string } }) {
             <WordForm
               id={params.id}
               defaultValues={searchData.data?.data}
-              onSubmitSuccess={() => router.back()}
+              onSubmitCreateSuccess={() => router.back()}
+              onSubmitUpdateSuccess={() => router.back()}
             />
           )}
         </CreateAndUpdateCard>

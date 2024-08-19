@@ -189,7 +189,14 @@ function WordList(props: {
           </Message.Error>
         ) : (
           <Fragment>
-            <CommandEmpty>No words found</CommandEmpty>
+            {flatData.length === 0 && (
+              <CommandGroup>
+                <CommandItem value={props.q} onSelect={props.onValueChange}>
+                  <Check className={cn('mr-2 h-4 w-4 opacity-100')} />
+                  {props.q}
+                </CommandItem>
+              </CommandGroup>
+            )}
             <VirtualizerContent asChild>
               <CommandGroup>
                 <VirtualizerTrack>

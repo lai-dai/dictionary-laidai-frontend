@@ -447,7 +447,11 @@ function CreateUpdateDataDialog({
           id={String(defaultValues?.id)}
           defaultValues={defaultValues}
           onClose={() => setOpen(false)}
-          onSubmitSuccess={() => {
+          onSubmitCreateSuccess={() => {
+            onSubmitSuccess?.()
+            setOpen(false)
+          }}
+          onSubmitUpdateSuccess={() => {
             onSubmitSuccess?.()
             setOpen(false)
           }}

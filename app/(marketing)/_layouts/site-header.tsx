@@ -18,7 +18,7 @@ export async function SiteHeader() {
       id="site-header"
       className="sticky top-0 z-50 w-full border-b border-muted bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
-      <MarketingPageContainer className="flex h-14 items-center gap-3">
+      <div className="container max-w-5xl flex h-14 items-center gap-3">
         <div className="flex-1">
           <MainNav />
           <MobileNav />
@@ -33,7 +33,7 @@ export async function SiteHeader() {
             <Link href={'/login'}>{t('Login')}</Link>
           </Button>
         )}
-      </MarketingPageContainer>
+      </div>
     </header>
   )
 }

@@ -41,18 +41,19 @@ export function WordForm({
   isCreated,
   id,
   defaultValues,
-  onSubmitSuccess,
+  onSubmitUpdateSuccess,
+  onSubmitCreateSuccess,
   inModal,
   onClose,
 }: {
   isCreated?: boolean
   id?: string
   defaultValues?: AttrType
-  onSubmitSuccess?: () => void
+  onSubmitUpdateSuccess?: (res: AttrType) => void
+  onSubmitCreateSuccess?: (res: AttrType) => void
   inModal?: boolean
   onClose?: () => void
 }) {
-  const router = useRouter()
   const createData = useMutation({
     mutationFn: (data: any) =>
       apiWithToken.post<ResFindOne<AttrType>>(API_INPUTS.words, data),
@@ -60,7 +61,10 @@ export function WordForm({
 
   const updateData = useMutation({
     mutationFn: (data: any) =>
-      apiWithToken.patch<ResFindOne<any>>(API_INPUTS.words + `/${id}`, data),
+      apiWithToken.patch<ResFindOne<AttrType>>(
+        API_INPUTS.words + `/${id}`,
+        data
+      ),
   })
   const form = useForm<CreateAttrType, Validator<CreateAttrType>>({
     defaultValues: defaultValues || {
@@ -78,15 +82,15 @@ export function WordForm({
     onSubmit: async ({ value }) => {
       const data = createAttrSchema.parse(value)
       if (isCreated) {
-        await createData.mutateAsync(data)
+        const res = await createData.mutateAsync(data)
 
         toast.success('Create successfully')
-        router.back()
+        onSubmitCreateSuccess?.(res.data)
       } else {
-        await updateData.mutateAsync(data)
+        const res = await updateData.mutateAsync(data)
         toast.success('Update successfully')
+        onSubmitUpdateSuccess?.(res.data)
       }
-      onSubmitSuccess?.()
     },
   })
   return (

@@ -32,102 +32,44 @@ export function MainNav() {
   )
 }
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: 'React js',
-    href: '/docs/reactjs',
-    description:
-      'A modal dialog that interrupts the user with important content and expects a response.',
-  },
-  {
-    title: 'Next js',
-    href: '/docs/nextjs',
-    description:
-      'For sighted users to preview content available behind a link.',
-  },
-  {
-    title: 'Tailwind css',
-    href: '/docs/tailwindcss',
-    description:
-      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
-  },
-  {
-    title: 'Shadcn',
-    href: '/docs/shadcn',
-    description: 'Visually or semantically separates content.',
-  },
-  {
-    title: 'Tantask',
-    href: '/docs/tantask',
-    description:
-      'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
-  },
-  {
-    title: 'Jotai',
-    href: '/docs/jotai',
-    description:
-      'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
-  },
-]
+export const menu_list: { title: string; href: string; description: string }[] =
+  [
+    {
+      title: 'Idioms',
+      href: '/idioms',
+      description:
+        'Thành ngữ là những từ không nhằm mục đích để hiểu theo nghĩa thông thường',
+    },
+    {
+      title: 'Examples',
+      href: '/examples',
+      description: 'Tra câu tiếng anh',
+    },
+    {
+      title: 'Part-of-Speeches',
+      href: '/part-of-speeches',
+      description:
+        'Từ loại là một hạng mục từ có các thuộc tính ngữ pháp giống nhau',
+    },
+    {
+      title: 'Top word',
+      href: '/top-word',
+      description: 'Từ được xem nhiều nhất',
+    },
+  ]
 
 export function NavigationMenuDemo() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>About</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink asChild>
-                    <a
-                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href="/"
-                    >
-                      <Logo className="h-6 w-6" />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        {siteConfig.author}
-                      </div>
-                      <p className="text-sm leading-tight text-muted-foreground">
-                        Nơi góc chia sẻ những bí kíp, thủ thuật mình tìm hiểu
-                        được với Reactjs, Nextjs
-                      </p>
-                    </a>
-                  </NavigationMenuLink>
-                </Link>
-              </li>
-              <Link href="/about-me" legacyBehavior passHref>
-                <ListItem href="/about-me" title="About me">
-                  Công việc khiến mình cảm thấy vui
-                </ListItem>
-              </Link>
-              <Link href="/projects" legacyBehavior passHref>
-                <ListItem href="/projects" title="Projects">
-                  Tất cả những dự án của mình nằm ở đây
-                </ListItem>
-              </Link>
-              <Link href="/blogs" legacyBehavior passHref>
-                <ListItem href="/blogs" title="Blogs">
-                  Chia sẻ dữ liệu, các link và tin tức
-                </ListItem>
-              </Link>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
           <NavigationMenuTrigger>Doc</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {components.map((component) => (
-                <Link
-                  key={component.title}
-                  href={component.href}
-                  legacyBehavior
-                  passHref
-                >
-                  <ListItem title={component.title} href={component.href}>
-                    {component.description}
+            <ul className="grid gap-3 p-4 w-96">
+              {menu_list.map((item) => (
+                <Link key={item.title} href={item.href} legacyBehavior passHref>
+                  <ListItem title={item.title} href={item.href}>
+                    {item.description}
                   </ListItem>
                 </Link>
               ))}

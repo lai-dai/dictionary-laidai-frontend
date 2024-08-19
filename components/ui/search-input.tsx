@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { Input, InputProps } from './input-2'
 import { chain } from '@/lib/utils/chain'
