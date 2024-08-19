@@ -1,15 +1,20 @@
+'use client'
+
 import React from 'react'
 import { DashboardPageContainer } from '@/components/page-container'
-import { PageForm } from '../_components/form'
+import { WordForm } from '../_components/form'
+import { CreateAndUpdateCard } from '../_components/layout'
+import { useRouter } from 'next/navigation'
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams: { total: string }
-}) {
+export default function Page() {
+  const router = useRouter()
   return (
-    <DashboardPageContainer>
-      <PageForm isCreateData total={Number(searchParams.total)} />
+    <DashboardPageContainer asChild>
+      <main>
+        <CreateAndUpdateCard isCreated>
+          <WordForm isCreated onSubmitSuccess={() => router.back()} />
+        </CreateAndUpdateCard>
+      </main>
     </DashboardPageContainer>
   )
 }

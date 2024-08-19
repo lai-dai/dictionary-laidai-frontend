@@ -45,7 +45,7 @@ import { mergeRefs } from '@/lib/hooks/use-merged-refs'
 import { Button, ButtonProps } from '@/components/ui/button'
 
 interface SortableListProps<TData extends Record<string, any>>
-  extends Omit<HTMLAttributes<HTMLUListElement>, 'children'> {
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   sensors?: (SensorDescriptor<any> | undefined | null)[]
   items?: TData[]
   idKey?: keyof TData
@@ -56,18 +56,24 @@ interface SortableListProps<TData extends Record<string, any>>
   dragOverlayProps?: DragOverlayProps
 }
 
-export function SortableList<TData extends Record<string, any>>({
-  sensors = [],
-  items = [],
-  idKey = 'id',
-  children,
-  onSortChange,
-  dndContextProps,
-  sortableContextProps,
-  dragOverlayProps,
-  className,
-  ...props
-}: SortableListProps<TData>) {
+export const SortableList = forwardRef<
+  HTMLDivElement,
+  SortableListProps<Record<string, any>>
+>(function SortableList(
+  {
+    sensors = [],
+    items = [],
+    idKey = 'id',
+    children,
+    onSortChange,
+    dndContextProps,
+    sortableContextProps,
+    dragOverlayProps,
+    className,
+    ...props
+  },
+  ref
+) {
   if (!(children instanceof Function)) {
     throw new Error('children must be Function')
   }
@@ -103,7 +109,8 @@ export function SortableList<TData extends Record<string, any>>({
         strategy={verticalListSortingStrategy}
         {...sortableContextProps}
       >
-        <ul
+        <div
+          ref={ref}
           role="application"
           className={cn('list-none', className)}
           {...props}
@@ -113,7 +120,7 @@ export function SortableList<TData extends Record<string, any>>({
               {children(item, index, arr)}
             </Fragment>
           ))}
-        </ul>
+        </div>
       </SortableContext>
 
       <SortableOverlay
@@ -146,7 +153,7 @@ export function SortableList<TData extends Record<string, any>>({
   function handleDragCancel() {
     setActive(null)
   }
-}
+})
 
 const dropAnimationConfig: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -175,12 +182,12 @@ const [SortableItemProvider, useSortableItemContext] =
     setActivatorNodeRef() {},
   })
 
-interface SortableItemProps extends Omit<HTMLAttributes<HTMLLIElement>, 'id'> {
+interface SortableItemProps extends Omit<HTMLAttributes<HTMLDivElement>, 'id'> {
   opts?: UseSortableArguments
   id: UniqueIdentifier
 }
 
-export const SortableItem = forwardRef<HTMLLIElement, SortableItemProps>(
+export const SortableItem = forwardRef<HTMLDivElement, SortableItemProps>(
   function SortableItem({ children, opts, style, id, ...props }, ref) {
     const {
       attributes,
@@ -202,7 +209,7 @@ export const SortableItem = forwardRef<HTMLLIElement, SortableItemProps>(
           setActivatorNodeRef,
         }}
       >
-        <li
+        <div
           ref={mergeRefs(ref, (r) => setNodeRef(r))}
           style={{
             opacity: isDragging ? 0.4 : undefined,
@@ -213,7 +220,7 @@ export const SortableItem = forwardRef<HTMLLIElement, SortableItemProps>(
           {...props}
         >
           {children}
-        </li>
+        </div>
       </SortableItemProvider>
     )
   }

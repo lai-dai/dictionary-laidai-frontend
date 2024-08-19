@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Input } from '../ui/input'
+import { Input } from '../ui/input-2'
 import { signIn } from 'next-auth/react'
 import {
   Card,
@@ -40,7 +40,7 @@ export function LoginForm() {
     validatorAdapter: zodValidator(),
     onSubmit: async ({ value }) => {
       await signIn('credentials', value)
-      toast.success(`${t('Register')} ${t('Success')}`)
+      toast.success(`${t('Login')} ${t('Success')}`)
     },
     onSubmitInvalid: ({ value, formApi }) => {
       console.error('💥 value', value)

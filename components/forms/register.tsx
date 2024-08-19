@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect } from 'react'
-import { Input } from '../ui/input'
+import { Input } from '../ui/input-2'
 import { signIn } from 'next-auth/react'
 import {
   Card,

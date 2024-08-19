@@ -1,5 +1,5 @@
 import React from 'react'
-import { WordsInput } from './_components/word-input'
+import { WordsInput } from '@/components/word-input'
 
 export default function Page() {
   return (

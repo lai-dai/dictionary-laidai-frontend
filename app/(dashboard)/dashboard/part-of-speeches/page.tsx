@@ -1,13 +1,13 @@
 import React from 'react'
 
 import { DashboardPageContainer } from '@/components/page-container'
-import { PageDataTable } from './_components/table'
+import { PartOfSpeechesDataTable } from './_components/table'
 
 export default function Page() {
   return (
     <DashboardPageContainer asChild>
       <main>
-        <PageDataTable />
+        <PartOfSpeechesDataTable />
       </main>
     </DashboardPageContainer>
   )

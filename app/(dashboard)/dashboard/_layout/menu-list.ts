@@ -1,6 +1,7 @@
 import {
   AlignLeft,
   AlignStartVertical,
+  AudioLines,
   Bookmark,
   Folder,
   LayoutGrid,
@@ -8,6 +9,7 @@ import {
   MessageSquareText,
   Pilcrow,
   Settings,
+  Ship,
   SquarePen,
   Tag,
   Users,
@@ -64,6 +66,42 @@ export function getMenuList(pathname: string): Group[] {
               href: '/dashboard/words/create',
               label: 'New Word',
               active: pathname === '/dashboard/words/create',
+            },
+          ],
+        },
+        {
+          href: '/dashboard/phonetics',
+          label: 'Phonetics',
+          active: false,
+          icon: AudioLines,
+          submenus: [
+            {
+              href: '/dashboard/phonetics',
+              label: 'All phonetics',
+              active: pathname === '/dashboard/phonetics',
+            },
+            {
+              href: '/dashboard/phonetics/create',
+              label: 'New phonetics',
+              active: pathname === '/dashboard/phonetics/create',
+            },
+          ],
+        },
+        {
+          href: '/dashboard/idioms',
+          label: 'Idioms',
+          active: false,
+          icon: Ship,
+          submenus: [
+            {
+              href: '/dashboard/idioms',
+              label: 'All idioms',
+              active: pathname === '/dashboard/idioms',
+            },
+            {
+              href: '/dashboard/idioms/create',
+              label: 'New idioms',
+              active: pathname === '/dashboard/idioms/create',
             },
           ],
         },

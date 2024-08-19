@@ -259,6 +259,31 @@ export const TableRow = forwardRef<
   )
 })
 
+export const TableExpandedRow = forwardRef<
+  HTMLTableRowElement,
+  Omit<HTMLAttributes<HTMLTableRowElement>, 'children'> & {
+    row?: Row<any>
+    children?: ReactElement | ((row: Row<any>) => ReactElement)
+  }
+>(function TableRow({ className, row, children, ...props }, ref) {
+  if (!row?.getIsExpanded()) return null
+  return (
+    <tr
+      ref={ref}
+      data-state={row?.getIsSelected() && 'selected'}
+      className={cn(
+        'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted group',
+        className
+      )}
+      {...props}
+    >
+      <td colSpan={row?.getVisibleCells().length}>
+        {children instanceof Function ? row && children(row) : children}
+      </td>
+    </tr>
+  )
+})
+
 export const TableCellsTrack = ({
   children,
   row,
@@ -368,5 +393,7 @@ function getTableCellStyles<TData>(column: Column<TData>): CSSProperties {
     position: isPinned ? 'sticky' : 'relative',
     width: column.getSize(),
     zIndex: isPinned ? 1 : 0,
+    minWidth: column.columnDef.minSize ?? 0,
+    maxWidth: column.columnDef.maxSize ?? 'none',
   }
 }

@@ -31,7 +31,7 @@ import { ResFind, ResFindOne } from '@/lib/types/common'
 import { Spinner } from '@/components/ui/spinner'
 import { Message } from '@/components/message'
 import { getErrorMessage } from '@/lib/utils/error-message'
-import { PartOfSpeechType } from '@/lib/types/part-of-speeches'
+import { GetAllPartOfSpeechAttr, PartOfSpeechAttr } from '../_lib/type'
 import { dateFormat } from '@/lib/utils/format'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
 import {
@@ -55,15 +55,22 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/lib/constants/common'
 import { FacetedFilter } from '@/components/faceted-flter'
 import { isObjectEquals } from '@/lib/utils/is-object-equals'
 import { SearchInput } from '@/components/ui/search-input'
+import { PartOfSpeechesForm } from './form'
 
-const initFilters = {
-  name: '',
-  order: '',
-  page: DEFAULT_PAGE,
-  limit: DEFAULT_PAGE_SIZE,
-}
-
-export function PageDataTable() {
+export function PartOfSpeechesDataTable({
+  navigateMode = 'push',
+  addNewModal,
+  initFilters = {
+    name: '',
+    order: '',
+    page: DEFAULT_PAGE,
+    limit: DEFAULT_PAGE_SIZE,
+  },
+}: {
+  navigateMode?: 'push' | 'replace' | 'none'
+  addNewModal?: boolean
+  initFilters?: GetAllPartOfSpeechAttr
+}) {
   const pathname = usePathname()
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     updatedAt: false,
@@ -71,16 +78,18 @@ export function PageDataTable() {
   })
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [filters, setFilters] = useUrlState(initFilters)
+  const [filters, setFilters] = useUrlState(initFilters, {
+    navigateMode,
+  })
   const searchData = useQuery({
     queryKey: [QUERY_KEYS.partOfSpeeches, filters],
     queryFn: () =>
-      apiWithToken.get<ResFind<PartOfSpeechType[]>>('/partOfSpeeches', {
+      apiWithToken.get<ResFind<PartOfSpeechAttr[]>>('/partOfSpeeches', {
         params: filters,
       }),
   })
 
-  const columns = useMemo<ColumnDef<PartOfSpeechType>[]>(() => {
+  const columns = useMemo<ColumnDef<PartOfSpeechAttr>[]>(() => {
     return [
       {
         id: 'select',
@@ -163,16 +172,33 @@ export function PageDataTable() {
         cell: (info) => {
           return (
             <div className="flex gap-3 justify-center">
-              <Button
-                asChild
-                variant={'secondary'}
-                size={'icon'}
-                className="size-6"
-              >
-                <Link href={`${pathname}/${info.row.original.id}`}>
-                  <Edit2 className="size-3" />
-                </Link>
-              </Button>
+              {addNewModal ? (
+                <CreateUpdateDataDialog
+                  defaultValues={info.row.original}
+                  onSubmitSuccess={() => {
+                    searchData.refetch()
+                  }}
+                >
+                  <Button
+                    variant={'secondary'}
+                    size={'icon'}
+                    className="size-6"
+                  >
+                    <Edit2 className="size-3" />
+                  </Button>
+                </CreateUpdateDataDialog>
+              ) : (
+                <Button
+                  asChild
+                  variant={'secondary'}
+                  size={'icon'}
+                  className="size-6"
+                >
+                  <Link href={`${pathname}/${info.row.original.id}`}>
+                    <Edit2 className="size-3" />
+                  </Link>
+                </Button>
+              )}
 
               <DeleteDataDialog
                 data={info.row.original}
@@ -274,14 +300,29 @@ export function PageDataTable() {
                 </DeleteDataDialog>
               ) : null}
 
-              <Button variant="outline" size={'sm'} asChild>
-                <Link
-                  href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
+              {addNewModal ? (
+                <CreateUpdateDataDialog
+                  isCreated
+                  total={searchData.data?.data.pagination.total}
+                  onSubmitSuccess={() => {
+                    searchData.refetch()
+                  }}
                 >
-                  <Plus className="size-4 mr-2" />
-                  New PoS
-                </Link>
-              </Button>
+                  <Button variant="outline" size={'sm'}>
+                    <Plus className="size-4 mr-2" />
+                    New PoS
+                  </Button>
+                </CreateUpdateDataDialog>
+              ) : (
+                <Button variant="outline" size={'sm'} asChild>
+                  <Link
+                    href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
+                  >
+                    <Plus className="size-4 mr-2" />
+                    New PoS
+                  </Link>
+                </Button>
+              )}
 
               <TableColumnVisible />
             </div>
@@ -346,14 +387,14 @@ function DeleteDataDialog({
   onSubmitSuccess,
   children,
 }: {
-  data: PartOfSpeechType | PartOfSpeechType[]
+  data: PartOfSpeechAttr | PartOfSpeechAttr[]
   onSubmitSuccess?: () => void
   children?: ReactNode
 }) {
   const [open, setOpen] = useState(false)
   const deleteData = useMutation({
     mutationFn: (id: any) =>
-      apiWithToken.delete<ResFindOne<PartOfSpeechType>>(
+      apiWithToken.delete<ResFindOne<PartOfSpeechAttr>>(
         API_INPUTS.partOfSpeeches + '/' + id
       ),
   })
@@ -407,6 +448,48 @@ function DeleteDataDialog({
             Delete
           </Button>
         </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function CreateUpdateDataDialog({
+  children,
+  total,
+  defaultValues,
+  isCreated,
+  onSubmitSuccess,
+}: {
+  children?: ReactNode
+  total?: number
+  defaultValues?: PartOfSpeechAttr
+  isCreated?: boolean
+  onSubmitSuccess?: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+
+      <DialogContent className="w-screen max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Create part of speeches</DialogTitle>
+          <DialogDescription>
+            Part of Speeches a category to which a word is assigned in
+            accordance with its syntactic functions.
+          </DialogDescription>
+        </DialogHeader>
+        <PartOfSpeechesForm
+          inModal
+          isCreated={isCreated}
+          defaultValues={defaultValues}
+          total={total}
+          onClose={() => setOpen(false)}
+          onSubmitSuccess={() => {
+            onSubmitSuccess?.()
+            setOpen(false)
+          }}
+        />
       </DialogContent>
     </Dialog>
   )

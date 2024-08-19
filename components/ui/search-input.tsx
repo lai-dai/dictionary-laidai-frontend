@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Input, InputProps } from './input'
+import { Input, InputProps } from './input-2'
 import { chain } from '@/lib/utils/chain'
 import { Button } from './button'
 import { X } from 'lucide-react'
@@ -12,9 +12,11 @@ export function SearchInput({
   onKeyDown,
   className,
   value,
+  defaultValue,
   ...props
-}: Omit<InputProps, 'value'> & {
+}: Omit<InputProps, 'value' | 'defaultValue'> & {
   value?: string
+  defaultValue?: string
   onSearchChange?: (value: string) => void
   onValueChange?: (value: string) => void
   classNames?: {
@@ -23,8 +25,8 @@ export function SearchInput({
   }
 }) {
   const [_value, setValue] = useUncontrolled({
-    defaultValue: '',
-    value: value,
+    defaultValue,
+    value,
     onValueChange,
   })
   return (

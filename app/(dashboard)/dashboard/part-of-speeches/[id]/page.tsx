@@ -1,32 +1,52 @@
+'use client'
+
 import React from 'react'
 import { DashboardPageContainer } from '@/components/page-container'
-import { PageForm } from '../_components/form'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { getQueryClient } from '@/lib/utils/get-query-client'
+import { PartOfSpeechesForm } from '../_components/form'
+import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
-import { serverApiWithToken } from '@/lib/api-server'
 import { ResFindOne } from '@/lib/types/common'
-import { PartOfSpeechType } from '@/lib/types/part-of-speeches'
+import { PartOfSpeechAttr } from '../_lib/type'
 import { API_INPUTS } from '@/lib/constants/api-input'
+import { CreateAndUpdateCard } from '../_components/layout'
+import { Spinner } from '@/components/ui/spinner'
+import { Message } from '@/components/message'
+import { getErrorMessage } from '@/lib/utils/error-message'
+import { useRouter } from 'next/navigation'
+import { apiWithToken } from '@/lib/api'
+import { Center } from '@/components/ui/center'
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const queryClient = getQueryClient()
+export default function Page({ params }: { params: { id: string } }) {
+  const router = useRouter()
 
-  if (!Number.isNaN(+params.id)) {
-    await queryClient.prefetchQuery({
-      queryKey: [QUERY_KEYS.partOfSpeeches, params.id],
-      queryFn: () =>
-        serverApiWithToken.get<ResFindOne<PartOfSpeechType>>(
-          API_INPUTS.partOfSpeeches + `/${params.id}`
-        ),
-    })
-  }
+  const searchData = useQuery<ResFindOne<PartOfSpeechAttr>>({
+    queryKey: [QUERY_KEYS.partOfSpeeches, params.id],
+    queryFn: () =>
+      apiWithToken.get<ResFindOne<PartOfSpeechAttr>>(
+        API_INPUTS.partOfSpeeches + `/${params.id}`
+      ),
+    enabled: !Number.isNaN(+params.id),
+  })
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <DashboardPageContainer>
-        <PageForm id={params.id} />
-      </DashboardPageContainer>
-    </HydrationBoundary>
+    <DashboardPageContainer>
+      <CreateAndUpdateCard>
+        {searchData.status === 'pending' ? (
+          <Center>
+            <Spinner />
+          </Center>
+        ) : searchData.status === 'error' ? (
+          <Center>
+            <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
+          </Center>
+        ) : (
+          <PartOfSpeechesForm
+            id={params.id}
+            defaultValues={searchData.data?.data}
+            onSubmitSuccess={() => router.back()}
+          />
+        )}
+      </CreateAndUpdateCard>
+    </DashboardPageContainer>
   )
 }

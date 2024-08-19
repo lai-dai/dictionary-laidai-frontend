@@ -10,7 +10,7 @@ import React, {
 import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -37,33 +37,56 @@ import {
   VirtualizerTrack,
 } from '@/components/ui/virtualizer'
 import { useUncontrolled } from '@/lib/hooks/use-uncontrolled'
+import { FormControl } from '@/components/ui/form-2'
+import { chain } from '@/lib/utils/chain'
 
-export function WordsInput(props: {
+export function WordsInput({
+  value,
+  onValueChange,
+  inForm,
+  onBlur,
+  className,
+  ...props
+}: ButtonProps & {
   value?: string
   onValueChange?: (value: string) => void
+  inForm?: boolean
+  onBlur?: () => void
 }) {
-  const [value, setValue] = useUncontrolled({
+  const [_value, setValue] = useUncontrolled({
     defaultValue: '',
-    value: props.value,
-    onValueChange: props.onValueChange,
+    value: value,
+    onValueChange: onValueChange,
   })
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
 
+  const Comp = inForm ? FormControl : Fragment
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={chain(setOpen, (open) => {
+        if (!open) {
+          onBlur?.()
+        }
+      })}
+    >
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value || 'Select words'}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+        <Comp>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn('justify-between', className)}
+            {...props}
+          >
+            {value || 'Select words'}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </Comp>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent align="start" className="p-0">
         <Command shouldFilter={false}>
           <CommandInput
             placeholder="Search words"

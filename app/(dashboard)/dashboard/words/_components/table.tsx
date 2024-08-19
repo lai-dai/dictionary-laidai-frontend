@@ -31,7 +31,6 @@ import { ResFind, ResFindOne } from '@/lib/types/common'
 import { Spinner } from '@/components/ui/spinner'
 import { Message } from '@/components/message'
 import { getErrorMessage } from '@/lib/utils/error-message'
-import { PartOfSpeechType } from '@/lib/types/part-of-speeches'
 import { dateFormat } from '@/lib/utils/format'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
 import {
@@ -52,18 +51,24 @@ import { TableColumnVisible } from '@/components/table-column-visible'
 import { TablePagination } from '@/components/table-pagination'
 import { URL_STATE_RESET, useUrlState } from '@/lib/hooks/use-url-state'
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/lib/constants/common'
-import { FacetedFilter } from '@/components/faceted-flter'
 import { isObjectEquals } from '@/lib/utils/is-object-equals'
 import { SearchInput } from '@/components/ui/search-input'
+import { AttrType, GetAllAttrType } from '../_lib/type'
+import { WordForm } from './form'
 
-const initFilters = {
-  name: '',
-  order: '',
-  page: DEFAULT_PAGE,
-  limit: DEFAULT_PAGE_SIZE,
-}
-
-export function PageDataTable() {
+export function WordsDataTable({
+  navigateMode = 'push',
+  createUpdateInModal,
+  initFilters = {
+    key: '',
+    page: DEFAULT_PAGE,
+    limit: DEFAULT_PAGE_SIZE,
+  },
+}: {
+  navigateMode?: 'push' | 'replace' | 'none'
+  createUpdateInModal?: boolean
+  initFilters?: GetAllAttrType
+}) {
   const pathname = usePathname()
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     updatedAt: false,
@@ -71,16 +76,18 @@ export function PageDataTable() {
   })
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [filters, setFilters] = useUrlState(initFilters)
+  const [filters, setFilters] = useUrlState(initFilters, {
+    navigateMode,
+  })
   const searchData = useQuery({
-    queryKey: [QUERY_KEYS.partOfSpeeches, filters],
+    queryKey: [QUERY_KEYS.words, filters],
     queryFn: () =>
-      apiWithToken.get<ResFind<PartOfSpeechType[]>>('/partOfSpeeches', {
+      apiWithToken.get<ResFind<AttrType[]>>(API_INPUTS.words, {
         params: filters,
       }),
   })
 
-  const columns = useMemo<ColumnDef<PartOfSpeechType>[]>(() => {
+  const columns = useMemo<ColumnDef<AttrType>[]>(() => {
     return [
       {
         id: 'select',
@@ -115,16 +122,8 @@ export function PageDataTable() {
         size: 60,
       },
       {
-        accessorKey: 'name',
-        header: 'Name',
-      },
-      {
-        accessorKey: 'abbreviation',
-        header: 'Abbreviation',
-      },
-      {
-        accessorKey: 'translate',
-        header: 'Translate',
+        accessorKey: 'word',
+        header: 'Word',
       },
       {
         accessorKey: 'description',
@@ -135,11 +134,6 @@ export function PageDataTable() {
             dangerouslySetInnerHTML={{ __html: info.getValue<string>() }}
           ></div>
         ),
-      },
-      {
-        accessorKey: 'order',
-        header: 'Order',
-        size: 50,
       },
       {
         accessorKey: 'createdBy.name',
@@ -163,16 +157,33 @@ export function PageDataTable() {
         cell: (info) => {
           return (
             <div className="flex gap-3 justify-center">
-              <Button
-                asChild
-                variant={'secondary'}
-                size={'icon'}
-                className="size-6"
-              >
-                <Link href={`${pathname}/${info.row.original.id}`}>
-                  <Edit2 className="size-3" />
-                </Link>
-              </Button>
+              {createUpdateInModal ? (
+                <CreateUpdateDataDialog
+                  defaultValues={info.row.original}
+                  onSubmitSuccess={() => {
+                    searchData.refetch()
+                  }}
+                >
+                  <Button
+                    variant={'secondary'}
+                    size={'icon'}
+                    className="size-6"
+                  >
+                    <Edit2 className="size-3" />
+                  </Button>
+                </CreateUpdateDataDialog>
+              ) : (
+                <Button
+                  asChild
+                  variant={'secondary'}
+                  size={'icon'}
+                  className="size-6"
+                >
+                  <Link href={`${pathname}/${info.row.original.id}`}>
+                    <Edit2 className="size-3" />
+                  </Link>
+                </Button>
+              )}
 
               <DeleteDataDialog
                 data={info.row.original}
@@ -219,30 +230,12 @@ export function PageDataTable() {
           <div className="flex w-full items-center justify-between gap-2 overflow-auto">
             <div className="flex flex-1 items-center gap-2">
               <SearchInput
-                placeholder={'Search name'}
-                defaultValue={filters.name}
-                onSearchChange={(name) => {
-                  setFilters({ name })
+                placeholder={'Search'}
+                defaultValue={filters.key}
+                onSearchChange={(key) => {
+                  setFilters({ key })
                 }}
                 className="h-8 w-40 lg:w-64"
-              />
-
-              <FacetedFilter
-                value={filters.order}
-                title="Sort"
-                onValueChange={(order) => {
-                  setFilters({ order })
-                }}
-                options={[
-                  {
-                    label: 'DESC',
-                    value: 'DESC',
-                  },
-                  {
-                    label: 'ASC',
-                    value: 'ASC',
-                  },
-                ]}
               />
 
               {!isObjectEquals(filters, initFilters) && (
@@ -274,14 +267,28 @@ export function PageDataTable() {
                 </DeleteDataDialog>
               ) : null}
 
-              <Button variant="outline" size={'sm'} asChild>
-                <Link
-                  href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
+              {createUpdateInModal ? (
+                <CreateUpdateDataDialog
+                  isCreated
+                  onSubmitSuccess={() => {
+                    searchData.refetch()
+                  }}
                 >
-                  <Plus className="size-4 mr-2" />
-                  New PoS
-                </Link>
-              </Button>
+                  <Button variant="outline" size={'sm'}>
+                    <Plus className="size-4 mr-2" />
+                    New Word
+                  </Button>
+                </CreateUpdateDataDialog>
+              ) : (
+                <Button variant="outline" size={'sm'} asChild>
+                  <Link
+                    href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
+                  >
+                    <Plus className="size-4 mr-2" />
+                    New Word
+                  </Link>
+                </Button>
+              )}
 
               <TableColumnVisible />
             </div>
@@ -346,16 +353,14 @@ function DeleteDataDialog({
   onSubmitSuccess,
   children,
 }: {
-  data: PartOfSpeechType | PartOfSpeechType[]
+  data: AttrType | AttrType[]
   onSubmitSuccess?: () => void
   children?: ReactNode
 }) {
   const [open, setOpen] = useState(false)
   const deleteData = useMutation({
     mutationFn: (id: any) =>
-      apiWithToken.delete<ResFindOne<PartOfSpeechType>>(
-        API_INPUTS.partOfSpeeches + '/' + id
-      ),
+      apiWithToken.delete<ResFindOne<AttrType>>(API_INPUTS.words + '/' + id),
   })
 
   const onDelete = async () => {
@@ -407,6 +412,46 @@ function DeleteDataDialog({
             Delete
           </Button>
         </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function CreateUpdateDataDialog({
+  children,
+  defaultValues,
+  isCreated,
+  onSubmitSuccess,
+}: {
+  children?: ReactNode
+  defaultValues?: AttrType
+  isCreated?: boolean
+  onSubmitSuccess?: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+
+      <DialogContent className="w-screen max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Create part of speeches</DialogTitle>
+          <DialogDescription>
+            Part of Speeches a category to which a word is assigned in
+            accordance with its syntactic functions.
+          </DialogDescription>
+        </DialogHeader>
+        <WordForm
+          inModal
+          isCreated={isCreated}
+          id={String(defaultValues?.id)}
+          defaultValues={defaultValues}
+          onClose={() => setOpen(false)}
+          onSubmitSuccess={() => {
+            onSubmitSuccess?.()
+            setOpen(false)
+          }}
+        />
       </DialogContent>
     </Dialog>
   )

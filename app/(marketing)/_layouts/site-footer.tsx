@@ -10,9 +10,9 @@ export function SiteFooter() {
           <p className="text-center text-sm leading-loose text-muted-foreground">
             Made by{' '}
             <a
-              href={siteConfig.links.twitter}
+              href={siteConfig.links.website}
               target="_blank"
-              rel="noreferrer"
+              // rel="noreferrer"
               className="font-medium underline underline-offset-4"
             >
               {siteConfig.author}

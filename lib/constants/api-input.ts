@@ -3,4 +3,13 @@ export const API_INPUTS = {
   register: '/auth/register',
   logout: '/auth/logout',
   partOfSpeeches: '/partOfSpeeches',
+  words: '/words',
+  examples: '/examples',
+  definitions: '/definitions',
+  users: '/users',
+  meanings: '/meanings',
+  favorites: '/favorites',
+  idioms: '/idioms',
+  comments: '/comments',
+  phonetics: '/phonetics',
 }
