@@ -100,6 +100,7 @@ export default function Page() {
                       .flatMap((page) => page.data?.list || [])
                       .map((item) => (
                         <CommandItem
+                          key={item.id}
                           onSelect={(value) => {
                             router.push('/word/' + value)
                           }}

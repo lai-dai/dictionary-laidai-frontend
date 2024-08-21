@@ -74,6 +74,7 @@ export const {
   secret: env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
+    maxAge: 86400,
   },
   providers: [
     Google({

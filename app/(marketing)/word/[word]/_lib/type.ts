@@ -9,6 +9,9 @@ export interface WordAttr {
   meanings: Meaning[]
   idioms: Idiom[]
   phonetics: Phonetic[]
+  favorite: {
+    id: 1
+  }
 }
 
 interface CreatedBy {
@@ -23,6 +26,7 @@ interface Meaning {
   id: number
   partOfSpeech: PartOfSpeech
   definitions: Definition[]
+  description: string
 }
 
 interface PartOfSpeech {
@@ -65,4 +69,14 @@ interface Phonetic {
   updatedAt: string
   createdById: number
   wordId: number
+}
+
+export interface CommentAttr {
+  id: number
+  content: string
+  totalLike: number
+  createdAt: string
+  updatedAt: string
+  createdBy: CreatedBy
+  children: CommentAttr[]
 }
