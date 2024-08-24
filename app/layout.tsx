@@ -10,8 +10,6 @@ import { NextIntlClientProvider } from 'next-intl'
 import { siteConfig } from '@/config/site'
 import { Toaster } from '@/components/ui/sonner'
 import { DeviceDetectProvider } from '@/components/device-detect/server'
-import { SessionProvider } from 'next-auth/react'
-import { auth } from '@/lib/auth'
 
 export const metadata: Metadata = {
   title: {
@@ -50,11 +48,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [locale, messages, session] = await Promise.all([
-    getLocale(),
-    getMessages(),
-    auth(),
-  ])
+  const [locale, messages] = await Promise.all([getLocale(), getMessages()])
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -67,11 +61,9 @@ export default async function RootLayout({
       >
         <div vaul-drawer-wrapper="">
           <NextIntlClientProvider messages={messages}>
-            <SessionProvider session={session}>
-              <DeviceDetectProvider>
-                <Providers>{children}</Providers>
-              </DeviceDetectProvider>
-            </SessionProvider>
+            <DeviceDetectProvider>
+              <Providers>{children}</Providers>
+            </DeviceDetectProvider>
           </NextIntlClientProvider>
         </div>
         <TailwindIndicator />

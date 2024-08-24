@@ -1,5 +1,5 @@
 import React from 'react'
-import { LoginForm } from '@/components/forms/login'
+import { LoginForm } from './_components/form'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 

@@ -12,4 +12,9 @@ export const API_INPUTS = {
   idioms: '/idioms',
   comments: '/comments',
   phonetics: '/phonetics',
+  dictionary: '/dictionary',
+  me: '/users/me',
+  updateMe: '/users/updateMe',
+  updateMyPassword: '/users/updateMyPassword',
+  deleteMe: '/users/deleteMe',
 }

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { DashboardPageContainer } from '@/components/page-container'
-import { FavoritesForm } from '../_components/form'
+import { UsersForm } from '../_components/form'
 import { CreateAndUpdateCard } from '../_components/layout'
 import { useRouter } from 'next/navigation'
 
@@ -11,7 +11,7 @@ export default function Page() {
   return (
     <DashboardPageContainer>
       <CreateAndUpdateCard isCreated>
-        <FavoritesForm isCreated onSubmitSuccess={() => router.back()} />
+        <UsersForm isCreated onSubmitSuccess={() => router.back()} />
       </CreateAndUpdateCard>
     </DashboardPageContainer>
   )

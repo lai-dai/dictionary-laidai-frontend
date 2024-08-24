@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { getServerSession, NextAuthOptions } from 'next-auth'
 
 import Google from 'next-auth/providers/google'
 import GitHub from 'next-auth/providers/github'
@@ -7,24 +7,18 @@ import Credentials from 'next-auth/providers/credentials'
 import { env } from '@/lib/env'
 import { api } from './api'
 import { API_INPUTS } from './constants/api-input'
-import { getErrorMessage } from './utils/error-message'
 import { ResFindOne } from './types/common'
 import { CredentialsAccount } from './types/auth'
+import { getErrorMessage } from './utils/error-message'
 
-export const {
-  handlers: { GET, POST },
-  auth,
-} = NextAuth({
+export const authOptions = {
   pages: {
     error: '/login',
     signIn: '/login',
     newUser: '/register',
   },
   callbacks: {
-    async signIn({ user, account }) {
-      return true
-    },
-    async jwt({ token, account, trigger, user }) {
+    async jwt({ token, account, trigger, user, session }) {
       switch (trigger) {
         case 'signIn':
           switch (account?.provider) {
@@ -41,9 +35,16 @@ export const {
                 token.createdAt = user.createdAt
                 token.updatedAt = user.updatedAt
                 token.token = user.token
+                token.tokenExpires = user.tokenExpires
               }
               break
           }
+          break
+        case 'update':
+          if (session.image) token.image = session.image
+          if (session.name) token.name = session.name
+          if (session.email) token.email = session.email
+
           break
       }
 
@@ -66,6 +67,8 @@ export const {
         session.user.createdAt = token.createdAt as string
         session.user.updatedAt = token.updatedAt as string
         session.user.token = token.token as string
+        session.user.tokenExpires = token.tokenExpires as string
+        session.user.image = token.image as string
       }
 
       return session
@@ -92,20 +95,26 @@ export const {
       },
       async authorize(credentials) {
         try {
-          const { email, password } = credentials
           const res = await api.post<ResFindOne<CredentialsAccount>>(
             API_INPUTS.login,
-            { email, password }
+            {
+              email: credentials?.email,
+              password: credentials?.password,
+            }
           )
           const { token, user } = res.data
           return { ...user, token }
         } catch (error) {
           console.error('💥 error', error)
-          throw new Error(
-            getErrorMessage(error, 'Có lỗi xảy ra, vui lòng thử lại sau!')
-          )
+          throw new Error(getErrorMessage(error))
         }
       },
     }),
   ],
-})
+} satisfies NextAuthOptions
+
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST }
+
+export const auth = () => getServerSession(authOptions)

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { DashboardPageContainer } from '@/components/page-container'
-import { FavoritesForm } from '../_components/form'
+import { UsersForm } from '../_components/form'
 import { useQuery } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
 import { ResFindOne } from '@/lib/types/common'
@@ -20,10 +20,10 @@ export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter()
 
   const searchData = useQuery<ResFindOne<AttrType>>({
-    queryKey: [QUERY_KEYS.phonetics, params.id],
+    queryKey: [QUERY_KEYS.users, params.id],
     queryFn: () =>
       apiWithToken.get<ResFindOne<AttrType>>(
-        API_INPUTS.phonetics + `/${params.id}`
+        API_INPUTS.users + `/${params.id}`
       ),
     enabled: !Number.isNaN(+params.id),
   })
@@ -40,7 +40,7 @@ export default function Page({ params }: { params: { id: string } }) {
             <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
           </Center>
         ) : (
-          <FavoritesForm
+          <UsersForm
             id={params.id}
             defaultValues={searchData.data?.data}
             onSubmitSuccess={() => router.back()}

@@ -26,6 +26,10 @@ export const DashboardPageContainer = forwardRef<
 >(function PageContainer({ className, asChild, ...props }, ref) {
   const Comp = asChild ? Slot : 'div'
   return (
-    <Comp ref={ref} className={cn('container py-4', className)} {...props} />
+    <Comp
+      ref={ref}
+      className={cn('container py-4 flex-1', className)}
+      {...props}
+    />
   )
 })

@@ -9,8 +9,8 @@ export interface WordAttr {
   meanings: Meaning[]
   idioms: Idiom[]
   phonetics: Phonetic[]
-  favorite: {
-    id: 1
+  favorite?: {
+    id: number
   }
 }
 
@@ -39,6 +39,9 @@ interface PartOfSpeech {
 interface Definition {
   id: number
   definition: string
+  translate: string
+  description: string
+  image: string
   examples: Example[]
 }
 
@@ -46,6 +49,7 @@ interface Example {
   id: number
   sentence: string
   translate: string
+  description: string
 }
 
 interface Idiom {

@@ -60,6 +60,9 @@ export function DefinitionsForm({
   const form = useForm<CreateAttrType, Validator<CreateAttrType>>({
     defaultValues: defaultValues || {
       definition: '',
+      description: '',
+      translate: '',
+      image: '',
       meaningId: undefined,
       wordId: undefined,
     },
@@ -92,7 +95,47 @@ export function DefinitionsForm({
           form.handleSubmit()
         }}
       >
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6">
+          <form.Field name="definition">
+            {(field) => (
+              <FormItem field={field}>
+                <FormLabel>
+                  definition:{' '}
+                  {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          </form.Field>
+          <form.Field name="translate">
+            {(field) => (
+              <FormItem field={field}>
+                <FormLabel>
+                  translate:{' '}
+                  {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          </form.Field>
           <form.Field name="image">
             {(field) => (
               <FormItem field={field}>
@@ -114,13 +157,13 @@ export function DefinitionsForm({
             )}
           </form.Field>
 
-          <form.Field name="definition">
+          <form.Field name="description">
             {(field) => (
               <Collapsible asChild>
-                <FormItem field={field} className="md:col-span-2">
+                <FormItem field={field}>
                   <CollapsibleTrigger asChild>
                     <FormLabel className="flex items-center gap-3 leading-6">
-                      definition:{' '}
+                      description:{' '}
                       {field.state.meta.isValidating ? (
                         <Spinner size={'xs'} />
                       ) : (

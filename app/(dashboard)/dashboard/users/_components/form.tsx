@@ -7,6 +7,7 @@ import { zodValidator } from '@tanstack/zod-form-adapter'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormItem,
   FormLabel,
   FormMessage,
@@ -24,9 +25,16 @@ import { onSubmitInvalid } from '@/lib/utils/on-submit-invalid'
 import { createAttrSchema } from '../_lib/schema'
 import { cn } from '@/lib/utils'
 import { TextareaAutoSize } from '@/components/ui/textarea-auto-size'
-import { NumericInput } from '@/components/ui/numeric-input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 
-export function FavoritesForm({
+export function UsersForm({
   isCreated,
   id,
   defaultValues,
@@ -43,22 +51,22 @@ export function FavoritesForm({
 }) {
   const createData = useMutation({
     mutationFn: (data: any) =>
-      apiWithToken.post<ResFindOne<AttrType>>(API_INPUTS.favorites, data),
+      apiWithToken.post<ResFindOne<AttrType>>(API_INPUTS.users, data),
   })
 
   const updateData = useMutation({
     mutationFn: (data: any) =>
       apiWithToken.patch<ResFindOne<AttrType>>(
-        API_INPUTS.favorites + `/${id}`,
+        API_INPUTS.users + `/${id}`,
         data
       ),
   })
   const form = useForm<CreateAttrType, Validator<CreateAttrType>>({
     defaultValues: defaultValues || {
-      content: '',
-      totalLike: 0,
-      commentId: undefined,
-      wordId: undefined,
+      email: '',
+      name: '',
+      role: 'user',
+      active: true,
     },
     validatorAdapter: zodValidator(),
     validators: {
@@ -89,16 +97,17 @@ export function FavoritesForm({
           form.handleSubmit()
         }}
       >
-        <div className="grid gap-6">
-          <form.Field name="content">
+        <div className="grid md:grid-cols-2 gap-6">
+          <form.Field name="name">
             {(field) => (
               <FormItem field={field}>
                 <FormLabel>
-                  content:{' '}
+                  name:{' '}
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>
-                  <TextareaAutoSize
+                  <Input
+                    type="text"
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -110,24 +119,67 @@ export function FavoritesForm({
             )}
           </form.Field>
 
-          <form.Field name="totalLike">
+          <form.Field name="email">
             {(field) => (
               <FormItem field={field}>
                 <FormLabel>
-                  translate:{' '}
+                  email:{' '}
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>
-                  <NumericInput
-                    min={0}
+                  <Input
+                    type="text"
+                    inputMode="email"
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
-                    onValueChange={({ floatValue }) => {
-                      field.handleChange(floatValue || 1)
-                    }}
-                    thousandSeparator={'.'}
-                    decimalSeparator={','}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          </form.Field>
+
+          <form.Field name="role">
+            {(field) => (
+              <FormItem field={field}>
+                <FormLabel>
+                  role:{' '}
+                  {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                </FormLabel>
+                <Select
+                  onValueChange={(value) => field.handleChange(value as any)}
+                  defaultValue={field.state.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a verified email to display" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="user">User</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          </form.Field>
+
+          <form.Field name="active">
+            {(field) => (
+              <FormItem field={field} className="flex gap-3 justify-between">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">active</FormLabel>
+                  <FormDescription>
+                    If turned off, the account will be locked.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.state.value}
+                    onCheckedChange={field.handleChange}
                   />
                 </FormControl>
                 <FormMessage />

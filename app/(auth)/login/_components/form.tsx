@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Input } from '../ui/input-2'
+import { Input } from '@/components/ui/input'
 import { signIn } from 'next-auth/react'
 import {
   Card,
@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/card'
 import { siteConfig } from '@/config/site'
 import { useTranslations } from 'next-intl'
-import { Button } from '../ui/button'
-import { Separator } from '../ui/separator'
-import { useForm } from '@tanstack/react-form'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { useForm, Validator } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import {
   Form,
@@ -21,29 +21,52 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form-2'
-import { Spinner } from '../ui/spinner'
-import { z } from 'zod'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+} from '@/components/ui/form-2'
+import { Spinner } from '@/components/ui/spinner'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
-import { PasswordInput } from '../ui/password-input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { LoginAttr } from '../_lib/type'
+import { loginSchema } from '../_lib/schema'
+import { onSubmitInvalid } from '@/lib/utils/on-submit-invalid'
+import { getErrorMessage } from '@/lib/utils/error-message'
+import { useRouter } from 'next/navigation'
 
 export function LoginForm() {
+  const router = useRouter()
   const t = useTranslations()
-  const form = useForm({
+  const form = useForm<LoginAttr, Validator<LoginAttr>>({
     defaultValues: {
       email: '',
       password: '',
     },
     validatorAdapter: zodValidator(),
-    onSubmit: async ({ value }) => {
-      await signIn('credentials', value)
-      toast.success(`${t('Login')} ${t('Success')}`)
+    validators: {
+      onSubmit: loginSchema,
     },
     onSubmitInvalid: ({ value, formApi }) => {
-      console.error('💥 value', value)
+      const parse = loginSchema.safeParse(value)
+      onSubmitInvalid(parse, formApi)
+    },
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        const res = await signIn('credentials', { ...value, redirect: false })
+        if (res?.ok) {
+          router.replace('/')
+          router.refresh()
+          toast.success(`${t('Login')} ${t('Success')}`)
+        } else {
+          formApi.setErrorMap({
+            onSubmit: getErrorMessage(res?.error),
+          })
+          toast.error(getErrorMessage(res?.error))
+        }
+      } catch (error) {
+        console.error('💥 error', error)
+        toast.error(getErrorMessage(error))
+      }
     },
   })
   return (
@@ -65,12 +88,7 @@ export function LoginForm() {
               form.handleSubmit()
             }}
           >
-            <form.Field
-              name="email"
-              validators={{
-                onChange: z.string().email(),
-              }}
-            >
+            <form.Field name="email">
               {(field) => (
                 <FormItem field={field} className="mb-4">
                   <FormLabel>
@@ -92,14 +110,7 @@ export function LoginForm() {
               )}
             </form.Field>
 
-            <form.Field
-              name="password"
-              validators={{
-                onChange: z
-                  .string()
-                  .min(6, 'must be at least 6 characters long'),
-              }}
-            >
+            <form.Field name="password">
               {(field) => (
                 <FormItem field={field} className="mb-8">
                   <FormLabel>
@@ -125,10 +136,10 @@ export function LoginForm() {
               {(errors) => {
                 return (
                   errors.length > 0 && (
-                    <Alert variant={'destructive'}>
+                    <Alert variant={'destructive'} className="mb-4">
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>Error</AlertTitle>
-                      <AlertDescription className="whitespace-pre">
+                      <AlertDescription className="whitespace-pre-wrap">
                         {errors}
                       </AlertDescription>
                     </Alert>

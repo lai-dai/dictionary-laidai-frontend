@@ -3,6 +3,7 @@ import { LocaleToggle } from '@/components/locale-toggle'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
 import { siteConfig } from '@/config/site'
+import { ModeToggle } from '@/components/mode-toggle'
 
 export async function SiteHeader() {
   return (
@@ -18,8 +19,9 @@ export async function SiteHeader() {
           </span>
         </Link>
 
-        <div className="ml-auto">
+        <div className="ml-auto space-x-3">
           <LocaleToggle />
+          <ModeToggle />
         </div>
       </div>
     </header>

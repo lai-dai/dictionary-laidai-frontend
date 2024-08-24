@@ -20,7 +20,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter()
 
   const searchData = useQuery<ResFindOne<AttrType>>({
-    queryKey: [QUERY_KEYS.phonetics, params.id],
+    queryKey: [QUERY_KEYS.idioms, params.id],
     queryFn: () =>
       apiWithToken.get<ResFindOne<AttrType>>(
         API_INPUTS.idioms + `/${params.id}`

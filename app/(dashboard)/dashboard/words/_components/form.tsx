@@ -181,16 +181,17 @@ export function WordForm({
                       updatedAt: false,
                       description: false,
                     }}
+                    word={defaultValues?.word}
                   />
                 </CardContent>
               </Card>
 
               <Card className="bg-muted/10">
                 <CardHeader className="p-2">
-                  <CardTitle className="text-sm">Idioms</CardTitle>
+                  <CardTitle className="text-sm">Meanings</CardTitle>
                 </CardHeader>
                 <CardContent className="p-2">
-                  <IdiomsDataTable
+                  <MeaningsDataTable
                     createUpdateInModal
                     navigateMode="none"
                     initFilters={{
@@ -209,10 +210,10 @@ export function WordForm({
 
               <Card className="bg-muted/10">
                 <CardHeader className="p-2">
-                  <CardTitle className="text-sm">Meanings</CardTitle>
+                  <CardTitle className="text-sm">Idioms</CardTitle>
                 </CardHeader>
                 <CardContent className="p-2">
-                  <MeaningsDataTable
+                  <IdiomsDataTable
                     createUpdateInModal
                     navigateMode="none"
                     initFilters={{

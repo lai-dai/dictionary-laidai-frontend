@@ -12,6 +12,7 @@ declare module 'next-auth' {
     createdAt: string
     updatedAt: string
     token: string
+    tokenExpires: string
   }
   interface Session {
     user: User

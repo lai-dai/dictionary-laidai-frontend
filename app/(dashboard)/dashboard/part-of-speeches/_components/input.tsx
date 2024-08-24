@@ -21,10 +21,11 @@ import {
 import {
   InfiniteData,
   useInfiniteQuery,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
-import { ResFind } from '@/lib/types/common'
+import { ResFind, ResFindOne } from '@/lib/types/common'
 import { PartOfSpeechAttr } from '../_lib/type'
 import { apiWithToken } from '@/lib/api'
 import {
@@ -61,6 +62,15 @@ export function PartOfSpeechInput({
     InfiniteData<ResFind<PartOfSpeechAttr[]>>
   >([QUERY_KEYS.partOfSpeeches, key])
 
+  const searchData = useQuery({
+    queryKey: [QUERY_KEYS.partOfSpeeches],
+    queryFn: () =>
+      apiWithToken.get<ResFindOne<PartOfSpeechAttr>>(
+        API_INPUTS.partOfSpeeches + '/' + _value
+      ),
+    enabled: Boolean(Number(_value)),
+  })
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -74,9 +84,11 @@ export function PartOfSpeechInput({
           >
             {!Number(_value)
               ? 'Select Part of Speeches'
-              : currList?.pages
-                  .flatMap((d) => d.data.list)
-                  .find((e) => e.id === Number(_value))?.name}
+              : currList
+                ? currList?.pages
+                    .flatMap((d) => d.data.list)
+                    .find((e) => e.id === Number(_value))?.name
+                : searchData.data?.data.name}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </FormControl>

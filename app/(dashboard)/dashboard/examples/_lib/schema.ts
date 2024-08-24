@@ -6,6 +6,7 @@ export const attrSchema = z.object({
   id: z.number(),
   sentence: z.string().min(1, 'require'),
   translate: z.string().optional(),
+  description: z.string().optional(),
   idiomId: z.number().min(1, 'greater than 0').optional(),
   definitionId: z.number().min(1, 'greater than 0').optional(),
   wordId: z.number().min(1, 'greater than 0').optional(),
@@ -20,6 +21,7 @@ export const createAttrSchema = attrSchema.pick({
   idiomId: true,
   definitionId: true,
   wordId: true,
+  description: true,
 })
 
 export const getAllAttrSchema = commonGetAllSchema.merge(

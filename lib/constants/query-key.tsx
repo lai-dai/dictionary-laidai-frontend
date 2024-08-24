@@ -10,4 +10,5 @@ export const QUERY_KEYS = {
   comments: '/comments',
   phonetics: '/phonetics',
   word: '/word',
+  dictionary: '/dictionary',
 }

@@ -32,6 +32,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { firstLetterBuilder } from '@/lib/utils/first-letter-builder'
 import { useRouter } from 'next/navigation'
 import { Center } from '@/components/ui/center'
+import { Button } from '@/components/ui/button'
+import { X } from 'lucide-react'
 
 export default function Page() {
   const router = useRouter()
@@ -70,12 +72,24 @@ export default function Page() {
           </CardHeader>
           <CardContent className="px-0 md:px-6">
             <Command shouldFilter={false} className="rounded-lg border">
-              <CommandInput
-                value={filters.key}
-                onValueChange={(key) => setFilters({ key })}
-                placeholder="Nhập yêu cầu của bạn"
-                className="h-16"
-              />
+              <div className="relative">
+                <CommandInput
+                  value={filters.key}
+                  onValueChange={(key) => setFilters({ key })}
+                  placeholder="Nhập yêu cầu của bạn"
+                  className="h-16 pr-12"
+                />
+                {!!filters.key && (
+                  <Button
+                    onClick={() => setFilters({ key: undefined })}
+                    size={'icon'}
+                    variant={'ghost'}
+                    className="rounded-full size-8 absolute top-1/2 -translate-y-1/2 right-3"
+                  >
+                    <X className="size-4" />
+                  </Button>
+                )}
+              </div>
               <CommandList className="max-h-none overflow-hidden">
                 {!key ? (
                   <Center>

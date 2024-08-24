@@ -68,11 +68,13 @@ export function PhoneticsDataTable({
     updatedAt: false,
     description: false,
   },
+  word,
 }: {
   navigateMode?: 'push' | 'replace' | 'none'
   createUpdateInModal?: boolean
   initFilters?: GetAllAttrType
   initColumnVisibility?: VisibilityState
+  word?: string
 }) {
   const pathname = usePathname()
   const [columnVisibility, setColumnVisibility] =
@@ -131,6 +133,10 @@ export function PhoneticsDataTable({
       {
         accessorKey: 'audio',
         header: 'Audio',
+        maxSize: 150,
+        cell: ({ getValue }) => (
+          <p className="truncate">{getValue<string>()}</p>
+        ),
       },
       {
         accessorKey: 'description',
@@ -163,7 +169,7 @@ export function PhoneticsDataTable({
       {
         id: 'actions',
         header: () => <p className="text-center">Actions</p>,
-        size: 50,
+        maxSize: 60,
         enableHiding: false,
         cell: (info) => {
           return (
@@ -174,6 +180,8 @@ export function PhoneticsDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
+                  word={word}
+                  id={String(info.row.original.id)}
                 >
                   <Button
                     variant={'secondary'}
@@ -290,6 +298,7 @@ export function PhoneticsDataTable({
                     audio: '',
                     description: '',
                   }}
+                  word={word}
                 >
                   <Button variant="outline" size={'sm'}>
                     <Plus className="size-4 mr-2" />
@@ -441,11 +450,15 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  word,
+  id,
 }: {
   children?: ReactNode
   defaultValues?: CreateAttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  word?: string
+  id?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -461,6 +474,7 @@ function CreateUpdateDataDialog({
           </DialogDescription>
         </DialogHeader>
         <PhoneticsForm
+          word={word}
           inModal
           isCreated={isCreated}
           defaultValues={defaultValues}
@@ -469,6 +483,7 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
+          id={id}
         />
       </DialogContent>
     </Dialog>

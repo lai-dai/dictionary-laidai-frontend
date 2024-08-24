@@ -15,7 +15,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle, ChevronDown, Save } from 'lucide-react'
 import { toast } from 'sonner'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { apiWithToken } from '@/lib/api'
 import { API_INPUTS } from '@/lib/constants/api-input'
 import { ResFindOne } from '@/lib/types/common'
@@ -37,6 +37,7 @@ export function PhoneticsForm({
   onSubmitSuccess,
   inModal,
   onClose,
+  word,
 }: {
   isCreated?: boolean
   id?: string
@@ -44,6 +45,7 @@ export function PhoneticsForm({
   onSubmitSuccess?: () => void
   inModal?: boolean
   onClose?: () => void
+  word?: string
 }) {
   const createData = useMutation({
     mutationFn: (data: any) =>
@@ -62,7 +64,7 @@ export function PhoneticsForm({
       phonetic: '',
       audio: '',
       description: '',
-      wordId: 0,
+      wordId: undefined,
     },
     validatorAdapter: zodValidator(),
     validators: {
@@ -83,6 +85,15 @@ export function PhoneticsForm({
       onSubmitSuccess?.()
     },
   })
+  const searchData = useQuery({
+    queryKey: ['search-phonetic', word],
+    queryFn: (data: any) =>
+      apiWithToken.get<any>(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
+        data
+      ),
+    enabled: false,
+  })
   return (
     <Form form={form}>
       <form
@@ -92,7 +103,30 @@ export function PhoneticsForm({
           form.handleSubmit()
         }}
       >
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6">
+          <div>
+            <Button
+              onClick={() => {
+                if (word) {
+                  searchData.refetch().then((res) => {
+                    const [data] = res.data
+                    const [phonetic] = data?.phonetics || []
+
+                    if (phonetic) {
+                      form.setFieldValue('phonetic', phonetic.text)
+                      form.setFieldValue('audio', phonetic.audio)
+                    }
+                  })
+                } else {
+                  toast.error('Not word found')
+                }
+              }}
+            >
+              {searchData.isPending && <Spinner className="mr-3" />}
+              Sync
+            </Button>
+          </div>
+
           <form.Field name="phonetic">
             {(field) => (
               <FormItem field={field}>
@@ -138,7 +172,7 @@ export function PhoneticsForm({
           <form.Field name="description">
             {(field) => (
               <Collapsible asChild>
-                <FormItem field={field} className="md:col-span-2">
+                <FormItem field={field}>
                   <CollapsibleTrigger asChild>
                     <FormLabel className="flex items-center gap-3 leading-6">
                       Description:{' '}

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/form-2'
 import { Spinner } from '@/components/ui/spinner'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle, Save } from 'lucide-react'
+import { AlertCircle, ChevronDown, Save } from 'lucide-react'
 import { toast } from 'sonner'
 import { useMutation } from '@tanstack/react-query'
 import { apiWithToken } from '@/lib/api'
@@ -24,6 +24,12 @@ import { onSubmitInvalid } from '@/lib/utils/on-submit-invalid'
 import { createAttrSchema } from '../_lib/schema'
 import { cn } from '@/lib/utils'
 import { TextareaAutoSize } from '@/components/ui/textarea-auto-size'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import { TinyEditor } from '@/components/tiny-editor'
 
 export function ExamplesForm({
   isCreated,
@@ -56,6 +62,7 @@ export function ExamplesForm({
     defaultValues: defaultValues || {
       sentence: '',
       translate: '',
+      description: '',
       definitionId: undefined,
       idiomId: undefined,
       wordId: undefined,
@@ -98,8 +105,7 @@ export function ExamplesForm({
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
+                  <TextareaAutoSize
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -128,6 +134,37 @@ export function ExamplesForm({
                 </FormControl>
                 <FormMessage />
               </FormItem>
+            )}
+          </form.Field>
+
+          <form.Field name="description">
+            {(field) => (
+              <Collapsible asChild>
+                <FormItem field={field}>
+                  <CollapsibleTrigger asChild>
+                    <FormLabel className="flex items-center gap-3 leading-6">
+                      description:{' '}
+                      {field.state.meta.isValidating ? (
+                        <Spinner size={'xs'} />
+                      ) : (
+                        <ChevronDown className="size-4" />
+                      )}
+                    </FormLabel>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <FormControl>
+                      <TinyEditor
+                        init={{ min_height: 300 }}
+                        textareaName={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onEditorChange={(value) => field.handleChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </CollapsibleContent>
+                </FormItem>
+              </Collapsible>
             )}
           </form.Field>
         </div>

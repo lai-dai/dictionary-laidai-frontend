@@ -1,7 +1,11 @@
-import { providerSchema, roleSchema } from '@/lib/schemas/common'
+import {
+  commonGetAllSchema,
+  providerSchema,
+  roleSchema,
+} from '@/lib/schemas/common'
 import { z } from 'zod'
 
-export const userSchema = z.object({
+export const attrSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string(),
@@ -12,3 +16,22 @@ export const userSchema = z.object({
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 })
+
+export const userSchema = attrSchema
+
+export const createAttrSchema = attrSchema.pick({
+  name: true,
+  email: true,
+  role: true,
+  active: true,
+})
+
+export const getAllAttrSchema = commonGetAllSchema.merge(
+  attrSchema
+    .pick({
+      name: true,
+      email: true,
+      role: true,
+    })
+    .partial()
+)

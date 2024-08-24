@@ -4,7 +4,7 @@ import React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { useSession } from 'next-auth/react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import { differenceInSeconds } from 'date-fns'
 import {
   AlertDialog,
@@ -31,7 +31,6 @@ export function Providers({ children }: { children?: React.ReactNode }) {
         },
       })
   )
-  const { data: session } = useSession()
 
   return (
     <NextThemesProvider
@@ -41,30 +40,41 @@ export function Providers({ children }: { children?: React.ReactNode }) {
     >
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={200} skipDelayDuration={100}>
-          {children}
-          {session?.expires &&
-            differenceInSeconds(new Date(session?.expires), new Date()) < 1 && (
-              <AlertDialog defaultOpen>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Phiên đăng nhập của bạn đã hết hạn?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Bạn hãy đăng nhập lại để sửa dụng các tính năng liên quan
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                      <Link href={'/login'}>Login</Link>
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
+          <SessionProvider>
+            {children}
+            <AuthAlert />
+          </SessionProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </NextThemesProvider>
+  )
+}
+
+function AuthAlert() {
+  const { data: session } = useSession()
+
+  return (
+    session?.expires &&
+    differenceInSeconds(new Date(session?.user.tokenExpires), new Date()) <
+      1 && (
+      <AlertDialog defaultOpen>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Phiên đăng nhập của bạn đã hết hạn?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn hãy đăng nhập lại để sửa dụng các tính năng liên quan
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Link href={'/login'}>Login</Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )
   )
 }

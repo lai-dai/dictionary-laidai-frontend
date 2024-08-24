@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import {
   DropdownMenu,
@@ -10,16 +12,20 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { auth } from '@/lib/auth'
 import { LogoutButton } from '@/components/logout-button'
 import Link from 'next/link'
 import { firstLetterBuilder } from '@/lib/utils/first-letter-builder'
 import { Spinner } from '@/components/ui/spinner'
 import { isAdmin } from '@/lib/utils/is-admin'
 import { BookA, LayoutGrid, LogOut, User } from 'lucide-react'
+import { AVATARS } from '@/lib/data/avatars'
+import { useSession } from 'next-auth/react'
 
-export async function UserNav() {
-  const session = await auth()
+export function UserNav() {
+  const { data: session } = useSession()
+  const currentAvatar = AVATARS.find(
+    (item) => item.name === session?.user.image
+  )
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -30,8 +36,8 @@ export async function UserNav() {
         >
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={session?.user?.image || ''}
-              alt={`@${session?.user?.name}`}
+              src={currentAvatar?.image}
+              alt={session?.user?.name || ''}
             />
             <AvatarFallback>
               {firstLetterBuilder(session?.user?.name)}
@@ -62,15 +68,16 @@ export async function UserNav() {
           )}
 
           <DropdownMenuItem asChild>
+            <Link href={'/account/my-favorites'} className="cursor-pointer">
+              <BookA className="size-4 mr-3" />
+              My favorites
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild>
             <Link href={'/account/profile'} className="cursor-pointer">
               <User className="size-4 mr-3" />
               Profile
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={'/account/my-dictionary'} className="cursor-pointer">
-              <BookA className="size-4 mr-3" />
-              My dictionary
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

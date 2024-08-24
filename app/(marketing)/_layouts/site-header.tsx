@@ -7,7 +7,6 @@ import { auth } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
-import { MarketingPageContainer } from '@/components/page-container'
 import { ModeToggle } from '@/components/mode-toggle'
 
 export async function SiteHeader() {

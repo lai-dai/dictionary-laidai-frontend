@@ -1,10 +1,30 @@
-import { DashboardPageContainer } from '@/components/page-container'
+import { MarketingPageContainer } from '@/components/page-container'
 import React from 'react'
+import {
+  UpdateMeForm,
+  AvatarChoose,
+  ChangePassword,
+  DeleteMe,
+} from './_components/view'
 
-export default function Page() {
+export const metadata = {
+  title: 'Profile',
+}
+
+export default async function Page() {
   return (
-    <DashboardPageContainer asChild>
-      <main className="flex-1 container">profile</main>
-    </DashboardPageContainer>
+    <MarketingPageContainer asChild>
+      <main className="flex flex-col">
+        <div className="flex-1 flex flex-col items-center gap-3">
+          <AvatarChoose />
+          <UpdateMeForm />
+          <ChangePassword />
+        </div>
+
+        <div className="flex flex-col items-center gap-3">
+          <DeleteMe />
+        </div>
+      </main>
+    </MarketingPageContainer>
   )
 }

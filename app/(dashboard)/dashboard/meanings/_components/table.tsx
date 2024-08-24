@@ -183,7 +183,7 @@ export function MeaningsDataTable({
       {
         id: 'actions',
         header: () => <p className="text-center">Actions</p>,
-        size: 50,
+        maxSize: 60,
         enableHiding: false,
         cell: (info) => {
           return (
@@ -391,6 +391,7 @@ export function MeaningsDataTable({
                                     updatedAt: false,
                                     description: false,
                                   }}
+                                  id={row.original.id}
                                 />
                               </CardContent>
                             </Card>

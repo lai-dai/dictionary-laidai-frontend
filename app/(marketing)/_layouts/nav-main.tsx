@@ -35,16 +35,21 @@ export function MainNav() {
 export const menu_list: { title: string; href: string; description: string }[] =
   [
     {
+      title: 'Contact',
+      href: '/contact',
+      description: 'Có câu hỏi nào, hãy liên hệ với tôi nhé',
+    },
+    {
       title: 'Idioms',
       href: '/idioms',
       description:
         'Thành ngữ là những từ không nhằm mục đích để hiểu theo nghĩa thông thường',
     },
-    {
-      title: 'Examples',
-      href: '/examples',
-      description: 'Tra câu tiếng anh',
-    },
+    // {
+    //   title: 'Examples',
+    //   href: '/examples',
+    //   description: 'Tra câu tiếng anh',
+    // },
     {
       title: 'Part-of-Speeches',
       href: '/part-of-speeches',
@@ -63,7 +68,21 @@ export function NavigationMenuDemo() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Doc</NavigationMenuTrigger>
+          <Link href="/dictionary" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Tra từ
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/examples" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Tra câu
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>About</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 w-96">
               {menu_list.map((item) => (
@@ -75,13 +94,6 @@ export function NavigationMenuDemo() {
               ))}
             </ul>
           </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/contact" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Contact
-            </NavigationMenuLink>
-          </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

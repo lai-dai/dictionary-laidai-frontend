@@ -24,7 +24,7 @@ import {
   AlertCircle,
   AudioLines,
   EllipsisVertical,
-  Notebook,
+  NotebookPen,
   TextQuote,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -67,11 +67,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { API_INPUTS } from '@/lib/constants/api-input'
+import { Badge } from '@/components/ui/badge'
+import { AudioButton } from '@/components/audio-button'
 
 export function WordView({ word }: { word: string }) {
   const { data: session } = useSession()
-  const searchData = useQuery<ResFindOne<WordAttr>>({
-    queryKey: [QUERY_KEYS.word, word],
+  const searchData = useQuery({
+    queryKey: [QUERY_KEYS.dictionary, word],
+    queryFn: () =>
+      apiWithToken.get<ResFindOne<WordAttr>>(
+        `${API_INPUTS.dictionary}/${word}`
+      ),
     enabled: false,
   })
 
@@ -97,7 +104,7 @@ export function WordView({ word }: { word: string }) {
   const data = searchData.data?.data
 
   return (
-    <Card className="shadow-none border-none">
+    <Card className="shadow-none">
       <CardHeader className="p-2 md:p-4">
         <div className="flex items-center justify-between gap-6">
           <CardTitle className="capitalize">{data.word}</CardTitle>
@@ -106,13 +113,16 @@ export function WordView({ word }: { word: string }) {
             onClick={() => {
               addFavorite.mutate(
                 {
-                  id: data.favorite.id,
+                  id: data?.favorite?.id || 0,
                   wordId: data.id,
                   currentFavorite: isFavorite,
                 },
                 {
                   onError(error, variables, context) {
                     toast.error(error.message || 'Lỗi')
+                  },
+                  onSuccess: () => {
+                    searchData.refetch()
                   },
                 }
               )
@@ -125,9 +135,9 @@ export function WordView({ word }: { word: string }) {
             {addFavorite.isPending ? (
               <Spinner className="size-3" />
             ) : isFavorite ? (
-              <BookmarkFilledIcon className="size-4" />
+              <BookmarkFilledIcon className="size-5" />
             ) : (
-              <BookmarkIcon className="size-4" />
+              <BookmarkIcon className="size-5" />
             )}
           </Button>
         </div>
@@ -139,17 +149,15 @@ export function WordView({ word }: { word: string }) {
                   key={item.id}
                   className="flex items-center justify-between"
                 >
-                  <p>[{item.phonetic}]</p>
+                  <p>{item.phonetic}</p>
                   {item.audio && (
-                    <Button
-                      onClick={() => {
-                        toast.info('Tính năng đang phát triển')
-                      }}
+                    <AudioButton
+                      src={item.audio}
                       size={'icon'}
                       variant={'ghost'}
                     >
-                      <AudioLines className="size-4" />
-                    </Button>
+                      <AudioLines className="size-5" />
+                    </AudioButton>
                   )}
                 </div>
               )
@@ -160,7 +168,7 @@ export function WordView({ word }: { word: string }) {
 
       <CardContent className="p-2 md:p-4 space-y-6">
         {data.meanings.length > 0 && (
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle title="meanings" className="font-semibold">
                 Meanings:{' '}
@@ -169,15 +177,17 @@ export function WordView({ word }: { word: string }) {
             {data.meanings.map((item) => {
               return (
                 <CardContent key={item.id} className="space-y-3">
-                  <h4>
-                    {item.partOfSpeech.name || '-'} (
-                    {item.partOfSpeech.abbreviation}):{' '}
-                    {item.partOfSpeech.translate}
+                  <h4 className="space-x-1.5">
+                    <Badge>{item.partOfSpeech.name || '-'}</Badge>
+                    <Badge variant={'outline'}>
+                      {item.partOfSpeech.abbreviation}
+                    </Badge>{' '}
+                    = {item.partOfSpeech.translate}
                   </h4>
 
                   {item.description && (
                     <Alert>
-                      <Notebook className="size-5" />
+                      <NotebookPen className="size-4" />
                       <AlertTitle>Note</AlertTitle>
                       <AlertDescription>
                         <div
@@ -192,20 +202,31 @@ export function WordView({ word }: { word: string }) {
                     {item.definitions.length > 0 &&
                       item.definitions.map((itm, idx) => {
                         return (
-                          <li key={itm.id} className="space-y-1">
-                            <div
-                              className="prose prose-slate dark:prose-invert"
-                              dangerouslySetInnerHTML={{
-                                __html: itm.definition,
-                              }}
-                            ></div>
+                          <li key={itm.id} className="space-y-2">
+                            <p>
+                              {itm.definition} = {itm.translate}
+                            </p>
+                            {itm.description && (
+                              <Alert>
+                                <NotebookPen className="size-4" />
+                                <AlertTitle>Note</AlertTitle>
+                                <AlertDescription>
+                                  <div
+                                    className="prose prose-slate dark:prose-invert prose-sm"
+                                    dangerouslySetInnerHTML={{
+                                      __html: itm.description,
+                                    }}
+                                  ></div>
+                                </AlertDescription>
+                              </Alert>
+                            )}
 
-                            <ul className="list-disc list-inside pl-2 space-y-1">
+                            <ul className="list-disc list-inside pl-2 space-y-1.5">
                               {itm.examples.length > 0 &&
                                 itm.examples.map((it) => {
                                   return (
                                     <li key={it.id}>
-                                      {it.sentence}: {it.translate}
+                                      {it.sentence} = {it.translate}
                                     </li>
                                   )
                                 })}
@@ -221,7 +242,7 @@ export function WordView({ word }: { word: string }) {
         )}
 
         {data.idioms.length > 0 && (
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <CardTitle title="Idioms" className="font-semibold">
                 Idioms:{' '}
@@ -263,7 +284,7 @@ export function WordView({ word }: { word: string }) {
 
         {data.description && (
           <Alert>
-            <Notebook className="size-5" />
+            <NotebookPen className="size-4" />
             <AlertTitle>Note</AlertTitle>
             <AlertDescription>
               <div
@@ -276,7 +297,7 @@ export function WordView({ word }: { word: string }) {
       </CardContent>
 
       <CardFooter className="p-2 md:p-4 justify-between">
-        <div className="flex items-center gap-3 text-muted-foreground">
+        <div className="text-xs flex items-center gap-3 text-muted-foreground">
           Created By:{' '}
           {data.createdBy.role === 'admin' ? (
             <p>admin</p>
@@ -301,14 +322,14 @@ export function WordView({ word }: { word: string }) {
 
 export function CommentsView({ word }: { word: string }) {
   const searchWord = useQuery<ResFindOne<WordAttr>>({
-    queryKey: [QUERY_KEYS.word, word],
+    queryKey: [QUERY_KEYS.dictionary, word],
     enabled: false,
   })
 
   const searchData = useInfiniteQuery({
     queryKey: [QUERY_KEYS.comments, searchWord.data?.data.id],
     queryFn: (ctx) =>
-      apiWithToken.get<ResFind<CommentAttr[]>>('/comments', {
+      apiWithToken.get<ResFind<CommentAttr[]>>(API_INPUTS.comments, {
         params: { wordId: searchWord.data?.data.id, page: ctx.pageParam },
       }),
     initialPageParam: 1,
@@ -324,12 +345,12 @@ export function CommentsView({ word }: { word: string }) {
   })
 
   return (
-    <Card className="border-0 shadow-none">
-      <CardHeader>
+    <Card className="shadow-none">
+      <CardHeader className="p-4">
         <CardTitle>Discussion</CardTitle>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="p-4">
         <section className="antialiased space-y-6">
           <CommentForm
             wordId={searchWord.data?.data.id}
@@ -406,12 +427,15 @@ function CommentForm({
 }) {
   const createData = useMutation({
     mutationFn: (data: CreateAttrType) =>
-      apiWithToken.post<ResFindOne<CommentAttr>>('/comments', data),
+      apiWithToken.post<ResFindOne<CommentAttr>>(API_INPUTS.comments, data),
   })
 
   const updateData = useMutation({
     mutationFn: (data: CreateAttrType) =>
-      apiWithToken.patch<ResFindOne<CommentAttr>>('/comments/' + id, data),
+      apiWithToken.patch<ResFindOne<CommentAttr>>(
+        API_INPUTS.comments + '/' + id,
+        data
+      ),
   })
 
   const form = useForm<CreateAttrType, Validator<CreateAttrType>>({
@@ -532,7 +556,7 @@ function CommentItem({
   const [isReply, setIsReply] = useState(false)
 
   const deleteData = useMutation({
-    mutationFn: () => apiWithToken.delete('/comments/' + data?.id),
+    mutationFn: () => apiWithToken.delete(API_INPUTS.comments + '/' + data?.id),
   })
 
   if (!data) {
@@ -542,7 +566,7 @@ function CommentItem({
 
   return (
     <>
-      <Card className={cn(className)}>
+      <Card className={cn('shadow-none', className)}>
         <CardHeader className="flex-row justify-between py-2 px-3">
           <div className="flex items-center gap-2">
             <Avatar className="size-9">
@@ -677,7 +701,7 @@ function CommentItem({
 
       {!isMore ? (
         data.children?.length > 0 && (
-          <div className="space-y-3 ml-12">
+          <div className="space-y-3 ml-9">
             {data.children.map((itm) => {
               return (
                 <CommentItem
@@ -714,7 +738,7 @@ function SubComment({
   const searchData = useInfiniteQuery({
     queryKey: [QUERY_KEYS.comments, wordId, commentId],
     queryFn: (ctx) =>
-      apiWithToken.get<ResFind<CommentAttr[]>>('/comments', {
+      apiWithToken.get<ResFind<CommentAttr[]>>(API_INPUTS.comments, {
         params: { page: ctx.pageParam, wordId, commentId },
       }),
     initialPageParam: 1,

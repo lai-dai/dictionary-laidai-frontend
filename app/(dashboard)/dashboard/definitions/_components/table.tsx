@@ -73,11 +73,13 @@ export function DefinitionsDataTable({
     updatedAt: false,
     description: false,
   },
+  id,
 }: {
   navigateMode?: 'push' | 'replace' | 'none'
   createUpdateInModal?: boolean
   initFilters?: GetAllAttrType
   initColumnVisibility?: VisibilityState
+  id?: string
 }) {
   const pathname = usePathname()
   const [columnVisibility, setColumnVisibility] =
@@ -155,6 +157,14 @@ export function DefinitionsDataTable({
       {
         accessorKey: 'definition',
         header: 'definition',
+      },
+      {
+        accessorKey: 'translate',
+        header: 'translate',
+      },
+      {
+        accessorKey: 'description',
+        header: 'description',
         cell: (info) => (
           <div
             className="line-clamp-2 prose prose-slate dark:prose-invert prose-sm"
@@ -194,6 +204,7 @@ export function DefinitionsDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
+                  id={id}
                 >
                   <Button
                     variant={'secondary'}
@@ -311,6 +322,7 @@ export function DefinitionsDataTable({
                     meaningId: initFilters.meaningId,
                     wordId: initFilters.wordId,
                   }}
+                  id={id}
                 >
                   <Button variant="outline" size={'sm'}>
                     <Plus className="size-4 mr-2" />
@@ -494,11 +506,13 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  id,
 }: {
   children?: ReactNode
   defaultValues?: CreateAttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  id?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -519,6 +533,7 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
+          id={id}
         />
       </DialogContent>
     </Dialog>

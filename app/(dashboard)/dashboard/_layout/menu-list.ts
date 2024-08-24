@@ -138,13 +138,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: MessageSquareText,
           submenus: [],
         },
-        {
-          href: '/dashboard/favorites',
-          label: 'Favorites',
-          active: pathname.startsWith('/dashboard/favorites'),
-          icon: Bookmark,
-          submenus: [],
-        },
+        // {
+        //   href: '/dashboard/favorites',
+        //   label: 'Favorites',
+        //   active: pathname.startsWith('/dashboard/favorites'),
+        //   icon: Bookmark,
+        //   submenus: [],
+        // },
       ],
     },
     {

@@ -29,6 +29,7 @@ import {
 import { onSubmitInvalid } from '@/lib/utils/on-submit-invalid'
 import { createAttrSchema } from '../_lib/schema'
 import { cn } from '@/lib/utils'
+import { TextareaAutoSize } from '@/components/ui/textarea-auto-size'
 
 export function IdiomsForm({
   isCreated,
@@ -92,7 +93,7 @@ export function IdiomsForm({
           form.handleSubmit()
         }}
       >
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6">
           <form.Field name="idiom">
             {(field) => (
               <FormItem field={field}>
@@ -101,8 +102,7 @@ export function IdiomsForm({
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
+                  <TextareaAutoSize
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -122,8 +122,7 @@ export function IdiomsForm({
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
+                  <TextareaAutoSize
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -138,7 +137,7 @@ export function IdiomsForm({
           <form.Field name="description">
             {(field) => (
               <Collapsible asChild>
-                <FormItem field={field} className="md:col-span-2">
+                <FormItem field={field}>
                   <CollapsibleTrigger asChild>
                     <FormLabel className="flex items-center gap-3 leading-6">
                       Description:{' '}

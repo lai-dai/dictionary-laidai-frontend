@@ -28,7 +28,7 @@ export function CreateAndUpdateCard({
             <ArrowLeft size={18} className="mr-3" /> Back
           </Button>
           <div>
-            <CardTitle>{isCreated ? 'Create' : 'Update'} Example</CardTitle>
+            <CardTitle>{isCreated ? 'Create' : 'Update'} User</CardTitle>
             <CardDescription></CardDescription>
           </div>
         </div>

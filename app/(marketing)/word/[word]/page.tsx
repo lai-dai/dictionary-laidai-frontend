@@ -6,6 +6,11 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { WordView, CommentsView } from './_components/view'
 import { serverApiWithToken } from '@/lib/api-server'
 import { BackButton } from '@/components/back-button'
+import { API_INPUTS } from '@/lib/constants/api-input'
+
+export const metadata = {
+  title: 'Tra từ',
+}
 
 export const revalidate = 0
 
@@ -14,8 +19,9 @@ export default async function Page({ params }: { params: { word: string } }) {
 
   if (params.word) {
     await queryClient.prefetchQuery({
-      queryKey: [QUERY_KEYS.word, params.word],
-      queryFn: () => serverApiWithToken.get('/dictionary/' + params.word),
+      queryKey: [QUERY_KEYS.dictionary, params.word],
+      queryFn: () =>
+        serverApiWithToken.get(API_INPUTS.dictionary + '/' + params.word),
     })
   }
 

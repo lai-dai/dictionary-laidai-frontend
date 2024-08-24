@@ -54,9 +54,9 @@ import { URL_STATE_RESET, useUrlState } from '@/lib/hooks/use-url-state'
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/lib/constants/common'
 import { isObjectEquals } from '@/lib/utils/is-object-equals'
 import { SearchInput } from '@/components/ui/search-input'
-import { FavoritesForm } from './form'
+import { UsersForm } from './form'
 
-export function FavoritesDataTable({
+export function UsersDataTable({
   navigateMode = 'push',
   createUpdateInModal,
   initFilters = {
@@ -84,9 +84,9 @@ export function FavoritesDataTable({
   })
 
   const searchData = useQuery({
-    queryKey: [QUERY_KEYS.favorites, filters],
+    queryKey: [QUERY_KEYS.examples, filters],
     queryFn: () =>
-      apiWithToken.get<ResFind<AttrType[]>>(API_INPUTS.favorites, {
+      apiWithToken.get<ResFind<AttrType[]>>(API_INPUTS.users, {
         params: filters,
       }),
   })
@@ -126,16 +126,28 @@ export function FavoritesDataTable({
         size: 60,
       },
       {
-        accessorKey: 'content',
-        header: 'content',
+        accessorKey: 'name',
+        header: 'name',
       },
       {
-        accessorKey: 'totalLike',
-        header: 'totalLike',
+        accessorKey: 'email',
+        header: 'email',
       },
       {
-        accessorKey: 'createdBy.name',
-        header: 'Created By',
+        accessorKey: 'role',
+        header: 'role',
+      },
+      {
+        accessorKey: 'image',
+        header: 'image',
+      },
+      {
+        accessorKey: 'provider',
+        header: 'provider',
+      },
+      {
+        accessorKey: 'active',
+        header: 'active',
       },
       {
         accessorKey: 'createdAt',
@@ -265,34 +277,38 @@ export function FavoritesDataTable({
                 </DeleteDataDialog>
               ) : null}
 
-              {createUpdateInModal ? (
+              {/* {createUpdateInModal ? (
                 <CreateUpdateDataDialog
                   isCreated
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
                   defaultValues={{
-                    content: '',
-                    totalLike: 0,
-                    commentId: initFilters.commentId,
-                    wordId: initFilters.wordId,
+                    email: '',
+                    name: '',
+                    role: 'user',
                   }}
                 >
-                  <Button variant="outline" size={'sm'}>
+                  <Button disabled variant="outline" size={'sm'}>
                     <Plus className="size-4 mr-2" />
-                    New Comment
+                    New User
                   </Button>
                 </CreateUpdateDataDialog>
               ) : (
-                <Button variant="outline" size={'sm'} asChild>
+                <Button
+                  variant="outline"
+                  size={'sm'}
+                  asChild
+                  className="hidden"
+                >
                   <Link
                     href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
                   >
                     <Plus className="size-4 mr-2" />
-                    New Comment
+                    New User
                   </Link>
                 </Button>
-              )}
+              )} */}
 
               <TableColumnVisible />
             </div>
@@ -364,9 +380,7 @@ function DeleteDataDialog({
   const [open, setOpen] = useState(false)
   const deleteData = useMutation({
     mutationFn: (id: any) =>
-      apiWithToken.delete<ResFindOne<AttrType>>(
-        API_INPUTS.favorites + '/' + id
-      ),
+      apiWithToken.delete<ResFindOne<AttrType>>(API_INPUTS.users + '/' + id),
   })
 
   const onDelete = async () => {
@@ -444,7 +458,7 @@ function CreateUpdateDataDialog({
           <DialogTitle>Create examples</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <FavoritesForm
+        <UsersForm
           inModal
           isCreated={isCreated}
           defaultValues={defaultValues}
