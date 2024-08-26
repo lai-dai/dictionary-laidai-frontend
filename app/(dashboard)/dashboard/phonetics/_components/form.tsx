@@ -104,17 +104,28 @@ export function PhoneticsForm({
         }}
       >
         <div className="grid gap-6">
-          <div>
+          <div className="space-y-1">
             <Button
               onClick={() => {
                 if (word) {
+                  let phonetic: string
+                  let audio: string
+
                   searchData.refetch().then((res) => {
                     const [data] = res.data
-                    const [phonetic] = data?.phonetics || []
+
+                    data?.phonetics?.forEach((item: any) => {
+                      if (!phonetic) {
+                        phonetic = item.text
+                        audio = item.audio
+                      }
+                    })
 
                     if (phonetic) {
-                      form.setFieldValue('phonetic', phonetic.text)
-                      form.setFieldValue('audio', phonetic.audio)
+                      form.setFieldValue('phonetic', phonetic)
+                    }
+                    if (audio) {
+                      form.setFieldValue('audio', audio)
                     }
                   })
                 } else {
@@ -122,9 +133,12 @@ export function PhoneticsForm({
                 }
               }}
             >
-              {searchData.isPending && <Spinner className="mr-3" />}
-              Sync
+              {searchData.isLoading && <Spinner className="mr-3" />}
+              Auto generator
             </Button>
+            <p className="text-sm text-muted-foreground">
+              from: https://api.dictionaryapi.dev/api/v2
+            </p>
           </div>
 
           <form.Field name="phonetic">

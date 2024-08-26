@@ -12,6 +12,10 @@ export interface WordAttr {
   favorite?: {
     id: number
   }
+  relationship: {
+    id: number
+    word: string
+  }[]
 }
 
 interface CreatedBy {

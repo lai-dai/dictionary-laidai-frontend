@@ -16,6 +16,7 @@ export type DictionaryAttr = {
     definitions: {
       id: number
       definition: string
+      translate: string
     }[]
   }[]
 }

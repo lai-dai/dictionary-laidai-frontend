@@ -222,7 +222,7 @@ function PartOfSpeechList({
                           ? searchData.hasNextPage
                             ? 'Loading more...'
                             : 'Nothing more to load'
-                          : item.name}
+                          : item.name + ` (${item.translate})`}
                       </CommandItem>
                     </VirtualizerItem>
                   )

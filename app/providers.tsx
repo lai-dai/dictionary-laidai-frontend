@@ -4,7 +4,7 @@ import React from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { SessionProvider, useSession } from 'next-auth/react'
+import { SessionProvider, signOut, useSession } from 'next-auth/react'
 import { differenceInSeconds } from 'date-fns'
 import {
   AlertDialog,
@@ -68,9 +68,22 @@ function AuthAlert() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link href={'/login'}>Login</Link>
+              <Link
+                href={
+                  '/login?callbackUrl=' +
+                  window.location.pathname +
+                  window.location.search
+                }
+                onClick={() => {
+                  signOut({
+                    callbackUrl:
+                      window.location.pathname + window.location.search,
+                  })
+                }}
+              >
+                Login
+              </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

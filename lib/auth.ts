@@ -16,6 +16,7 @@ export const authOptions = {
     error: '/login',
     signIn: '/login',
     newUser: '/register',
+    signOut: '/login',
   },
   callbacks: {
     async jwt({ token, account, trigger, user, session }) {

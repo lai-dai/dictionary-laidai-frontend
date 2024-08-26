@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useForm, Validator } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
@@ -14,8 +13,7 @@ import {
 import { Spinner } from '@/components/ui/spinner'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle, ChevronDown, Save } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiWithToken } from '@/lib/api'
 import { API_INPUTS } from '@/lib/constants/api-input'
 import { ResFindOne } from '@/lib/types/common'
@@ -35,7 +33,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PhoneticsDataTable } from '../../phonetics/_components/table'
 import { IdiomsDataTable } from '../../idioms/_components/table'
 import { MeaningsDataTable } from '../../meanings/_components/table'
-import { WordsInput } from '@/components/word-input'
+import { NameWordsInput } from '@/components/name-word-input'
+import { WordsWordsLinksDataTable } from '../../word-word-links/table'
+import { QUERY_KEYS } from '@/lib/constants/query-key'
 
 export function WordForm({
   isCreated,
@@ -54,6 +54,7 @@ export function WordForm({
   inModal?: boolean
   onClose?: () => void
 }) {
+  const queryClient = useQueryClient()
   const createData = useMutation({
     mutationFn: (data: any) =>
       apiWithToken.post<ResFindOne<AttrType>>(API_INPUTS.words, data),
@@ -93,6 +94,7 @@ export function WordForm({
       }
     },
   })
+
   return (
     <Form form={form}>
       <form
@@ -118,7 +120,7 @@ export function WordForm({
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                   /> */}
-                  <WordsInput
+                  <NameWordsInput
                     inForm
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -130,6 +132,32 @@ export function WordForm({
               </FormItem>
             )}
           </form.Field>
+
+          {!isCreated && (
+            <Card className="bg-muted/10">
+              <CardHeader className="p-2">
+                <CardTitle className="text-sm">relationship</CardTitle>
+              </CardHeader>
+              <CardContent className="p-2">
+                <WordsWordsLinksDataTable
+                  createUpdateInModal
+                  navigateMode="none"
+                  initFilters={{
+                    key: '',
+                    page: DEFAULT_PAGE,
+                    limit: DEFAULT_PAGE_SIZE,
+                    wordId: Number(id),
+                  }}
+                  onSubmitSuccessfully={() => {
+                    queryClient.refetchQueries({
+                      queryKey: [QUERY_KEYS.words, id],
+                    })
+                  }}
+                  data={defaultValues?.relationship}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <form.Field name="description">
             {(field) => (

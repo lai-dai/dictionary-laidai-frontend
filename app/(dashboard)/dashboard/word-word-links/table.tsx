@@ -31,7 +31,7 @@ import { ResFind, ResFindOne } from '@/lib/types/common'
 import { Spinner } from '@/components/ui/spinner'
 import { Message } from '@/components/message'
 import { getErrorMessage } from '@/lib/utils/error-message'
-import { GetAllAttrType, AttrType, CreateAttrType } from '../_lib/type'
+import { GetAllAttrType, AttrType, CreateAttrType } from './type'
 import { dateFormat } from '@/lib/utils/format'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
 import {
@@ -54,11 +54,11 @@ import { URL_STATE_RESET, useUrlState } from '@/lib/hooks/use-url-state'
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/lib/constants/common'
 import { isObjectEquals } from '@/lib/utils/is-object-equals'
 import { SearchInput } from '@/components/ui/search-input'
-import { PhoneticsForm } from './form'
+import { WordsWordsLinksForm } from './form'
 
-export function PhoneticsDataTable({
+export function WordsWordsLinksDataTable({
   navigateMode = 'push',
-  createUpdateInModal: createUpdateInModal,
+  createUpdateInModal,
   initFilters = {
     key: '',
     page: DEFAULT_PAGE,
@@ -68,13 +68,15 @@ export function PhoneticsDataTable({
     updatedAt: false,
     description: false,
   },
-  word,
+  data,
+  onSubmitSuccessfully,
 }: {
   navigateMode?: 'push' | 'replace' | 'none'
   createUpdateInModal?: boolean
   initFilters?: GetAllAttrType
   initColumnVisibility?: VisibilityState
-  word?: string
+  data?: AttrType[]
+  onSubmitSuccessfully?: () => void
 }) {
   const pathname = usePathname()
   const [columnVisibility, setColumnVisibility] =
@@ -84,12 +86,14 @@ export function PhoneticsDataTable({
   const [filters, setFilters] = useUrlState(initFilters, {
     navigateMode,
   })
+
   const searchData = useQuery({
-    queryKey: [QUERY_KEYS.phonetics, filters],
+    queryKey: [QUERY_KEYS.wordsWordsLinks, filters],
     queryFn: () =>
-      apiWithToken.get<ResFind<AttrType[]>>(API_INPUTS.phonetics, {
+      apiWithToken.get<ResFind<AttrType[]>>(API_INPUTS.wordsWordsLinks, {
         params: filters,
       }),
+    enabled: !data,
   })
 
   const columns = useMemo<ColumnDef<AttrType>[]>(() => {
@@ -122,66 +126,36 @@ export function PhoneticsDataTable({
         size: 30,
       },
       {
-        accessorKey: 'id',
+        accessorKey: 'words_words_links.id',
         header: 'ID',
         size: 60,
       },
+      // {
+      //   accessorKey: 'wordId',
+      //   header: 'wordId',
+      // },
       {
-        accessorKey: 'phonetic',
-        header: 'Phonetic',
-      },
-      {
-        accessorKey: 'audio',
-        header: 'Audio',
-        maxSize: 150,
-        cell: ({ getValue }) => (
-          <p className="truncate">{getValue<string>()}</p>
-        ),
-      },
-      {
-        accessorKey: 'description',
-        header: 'Description',
-        cell: (info) => (
-          <div
-            className="line-clamp-2 prose prose-slate dark:prose-invert prose-sm"
-            dangerouslySetInnerHTML={{ __html: info.getValue<string>() }}
-          ></div>
-        ),
-      },
-      {
-        accessorKey: 'word.word',
-        header: 'Word',
-      },
-      {
-        accessorKey: 'createdBy.name',
-        header: 'Created By',
-      },
-      {
-        accessorKey: 'createdAt',
-        header: 'Created At',
-        cell: (info) => dateFormat(info.getValue<string>()),
-      },
-      {
-        accessorKey: 'updatedAt',
-        header: 'Created At',
-        cell: (info) => dateFormat(info.getValue<string>()),
+        accessorKey: 'word',
+        header: 'relationship',
       },
       {
         id: 'actions',
         header: () => <p className="text-center">Actions</p>,
-        maxSize: 60,
+        size: 50,
         enableHiding: false,
         cell: (info) => {
           return (
             <div className="flex gap-3 justify-center">
               {createUpdateInModal ? (
                 <CreateUpdateDataDialog
-                  defaultValues={info.row.original}
-                  onSubmitSuccess={() => {
-                    searchData.refetch()
+                  defaultValues={{
+                    relationshipId: info.row.original.id,
+                    wordId: initFilters.wordId || 0,
                   }}
-                  word={word}
-                  id={String(info.row.original.id)}
+                  onSubmitSuccess={() => {
+                    // searchData.refetch()
+                    onSubmitSuccessfully?.()
+                  }}
                 >
                   <Button
                     variant={'secondary'}
@@ -207,7 +181,8 @@ export function PhoneticsDataTable({
               <DeleteDataDialog
                 data={info.row.original}
                 onSubmitSuccess={() => {
-                  searchData.refetch()
+                  // searchData.refetch()
+                  onSubmitSuccessfully?.()
                 }}
               >
                 <Button
@@ -226,7 +201,7 @@ export function PhoneticsDataTable({
   }, [])
   return (
     <DataTable
-      data={searchData.data?.data.list || []}
+      data={data || searchData.data?.data.list || []}
       columns={columns}
       options={{
         initialState: {
@@ -275,7 +250,8 @@ export function PhoneticsDataTable({
                     .getFilteredSelectedRowModel()
                     .rows.map((row) => row.original)}
                   onSubmitSuccess={() => {
-                    searchData.refetch()
+                    // searchData.refetch()
+                    onSubmitSuccessfully?.()
                     table.toggleAllRowsSelected(false)
                   }}
                 >
@@ -290,19 +266,17 @@ export function PhoneticsDataTable({
                 <CreateUpdateDataDialog
                   isCreated
                   onSubmitSuccess={() => {
-                    searchData.refetch()
+                    // searchData.refetch()
+                    onSubmitSuccessfully?.()
                   }}
                   defaultValues={{
-                    wordId: initFilters.wordId,
-                    phonetic: '',
-                    audio: '',
-                    description: '',
+                    wordId: initFilters.wordId || 0,
+                    relationshipId: 0,
                   }}
-                  word={word}
                 >
                   <Button variant="outline" size={'sm'}>
                     <Plus className="size-4 mr-2" />
-                    New Phonetic
+                    New relationship
                   </Button>
                 </CreateUpdateDataDialog>
               ) : (
@@ -311,7 +285,7 @@ export function PhoneticsDataTable({
                     href={`${pathname}/create?total=${searchData.data?.data.pagination.total}`}
                   >
                     <Plus className="size-4 mr-2" />
-                    New Phonetic
+                    New relationship
                   </Link>
                 </Button>
               )}
@@ -332,7 +306,7 @@ export function PhoneticsDataTable({
 
               <TableBody>
                 <TableRowsEmpty>
-                  {searchData.status === 'pending' ? (
+                  {/* {searchData.status === 'pending' ? (
                     <div className="flex justify-center">
                       <Spinner className="mx-auto" />
                     </div>
@@ -342,7 +316,8 @@ export function PhoneticsDataTable({
                     </Message.Error>
                   ) : (
                     <Message className="text-center">Not result</Message>
-                  )}
+                  )} */}
+                  <Message className="text-center">Not result</Message>
                 </TableRowsEmpty>
 
                 <TableRowsTrack>
@@ -387,7 +362,7 @@ function DeleteDataDialog({
   const deleteData = useMutation({
     mutationFn: (id: any) =>
       apiWithToken.delete<ResFindOne<AttrType>>(
-        API_INPUTS.phonetics + '/' + id
+        API_INPUTS.wordsWordsLinks + '/' + id
       ),
   })
 
@@ -395,10 +370,10 @@ function DeleteDataDialog({
     try {
       let id
       if (Array.isArray(data)) {
-        const ids = data.map((e) => e.id)
+        const ids = data.map((e) => e.words_words_links.id)
         id = qs.stringify({ ids })
       } else {
-        id = data.id
+        id = data.words_words_links.id
       }
       const res = await deleteData.mutateAsync(id)
 
@@ -450,15 +425,11 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
-  word,
-  id,
 }: {
   children?: ReactNode
   defaultValues?: CreateAttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
-  word?: string
-  id?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -467,11 +438,10 @@ function CreateUpdateDataDialog({
 
       <DialogContent className="w-screen max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Create Phonetics</DialogTitle>
+          <DialogTitle>Create Relationship</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <PhoneticsForm
-          word={word}
+        <WordsWordsLinksForm
           inModal
           isCreated={isCreated}
           defaultValues={defaultValues}
@@ -480,7 +450,6 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
-          id={id}
         />
       </DialogContent>
     </Dialog>

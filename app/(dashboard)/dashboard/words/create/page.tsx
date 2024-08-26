@@ -3,7 +3,7 @@
 import React from 'react'
 import { DashboardPageContainer } from '@/components/page-container'
 import { WordForm } from '../_components/form'
-import { CreateAndUpdateCard } from '../_components/layout'
+import { CreateAndUpdateCard } from '../_components/card'
 import { usePathname, useRouter } from 'next/navigation'
 
 export default function Page() {

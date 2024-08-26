@@ -11,4 +11,6 @@ export const QUERY_KEYS = {
   phonetics: '/phonetics',
   word: '/word',
   dictionary: '/dictionary',
+  wordsWordsLinks: '/wordsWordsLinks',
+  onlyWord: '/words/onlyWord',
 }

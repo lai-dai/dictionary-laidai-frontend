@@ -34,6 +34,7 @@ import { useRouter } from 'next/navigation'
 import { Center } from '@/components/ui/center'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
+import { API_INPUTS } from '@/lib/constants/api-input'
 
 export default function Page() {
   const router = useRouter()
@@ -43,9 +44,9 @@ export default function Page() {
   const [key] = useDebounce(filters.key, 600)
 
   const searchData = useInfiniteQuery({
-    queryKey: ['/api/dictionary', key],
+    queryKey: [API_INPUTS.dictionary, key],
     queryFn: (ctx) =>
-      api.get<ResFind<DictionaryAttr[]>>('/dictionary', {
+      api.get<ResFind<DictionaryAttr[]>>(API_INPUTS.dictionary, {
         params: {
           key: key,
           page: ctx.pageParam,
@@ -143,14 +144,13 @@ export default function Page() {
                             <CardContent className="p-2">
                               {item.meanings.length > 0 &&
                                 item.meanings[0].definitions.length > 0 && (
-                                  <div
-                                    className="line-clamp-3 prose prose-slate dark:prose-invert prose-sm"
-                                    dangerouslySetInnerHTML={{
-                                      __html:
-                                        item.meanings[0].definitions[0]
-                                          .definition,
-                                    }}
-                                  ></div>
+                                  <p className="line-clamp-3 prose prose-slate dark:prose-invert prose-sm">
+                                    {item.meanings[0].definitions[0].definition
+                                      ? item.meanings[0].definitions[0]
+                                          .definition + ' = '
+                                      : ''}
+                                    {item.meanings[0].definitions[0].translate}
+                                  </p>
                                 )}
                             </CardContent>
 

@@ -61,7 +61,7 @@ export function FacetedFilter({
               >
                 {selectedValues.size}
               </Badge>
-              <div className="hidden space-x-1 lg:flex">
+              <span className="hidden space-x-1 lg:flex">
                 {selectedValues.size > 2 ? (
                   <Badge
                     variant="secondary"
@@ -82,7 +82,7 @@ export function FacetedFilter({
                       </Badge>
                     ))
                 )}
-              </div>
+              </span>
             </>
           )}
         </Button>

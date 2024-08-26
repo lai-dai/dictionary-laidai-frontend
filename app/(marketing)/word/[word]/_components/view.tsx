@@ -70,6 +70,7 @@ import {
 import { API_INPUTS } from '@/lib/constants/api-input'
 import { Badge } from '@/components/ui/badge'
 import { AudioButton } from '@/components/audio-button'
+import Link from 'next/link'
 
 export function WordView({ word }: { word: string }) {
   const { data: session } = useSession()
@@ -167,6 +168,21 @@ export function WordView({ word }: { word: string }) {
       </CardHeader>
 
       <CardContent className="p-2 md:p-4 space-y-6">
+        {data.relationship.length > 0 && (
+          <Card className="shadow-none">
+            <CardHeader>
+              <p>
+                View:
+                {data.relationship.map((item) => (
+                  <Link href={`/word/${item.word}`} className="underline ml-2">
+                    {item.word}
+                  </Link>
+                ))}
+              </p>
+            </CardHeader>
+          </Card>
+        )}
+
         {data.meanings.length > 0 && (
           <Card className="shadow-none">
             <CardHeader>
@@ -204,7 +220,8 @@ export function WordView({ word }: { word: string }) {
                         return (
                           <li key={itm.id} className="space-y-2">
                             <p>
-                              {itm.definition} = {itm.translate}
+                              {itm.definition ? itm.definition + ' = ' : ''}
+                              {itm.translate}
                             </p>
                             {itm.description && (
                               <Alert>

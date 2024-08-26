@@ -24,9 +24,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { nextApi } from '@/lib/api'
-import { ResFind } from '@/lib/types/common'
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { apiWithToken, nextApi } from '@/lib/api'
+import { ResFind, ResFindOne } from '@/lib/types/common'
 import { Spinner } from '@/components/ui/spinner'
 import { getErrorMessage } from '@/lib/utils/error-message'
 import { Message } from '@/components/message'
@@ -39,29 +44,50 @@ import {
 import { useUncontrolled } from '@/lib/hooks/use-uncontrolled'
 import { FormControl } from '@/components/ui/form-2'
 import { chain } from '@/lib/utils/chain'
+import { API_INPUTS } from '@/lib/constants/api-input'
+import { useDebounce } from 'use-debounce'
+import { Badge } from '@/components/ui/badge'
+import { QUERY_KEYS } from '@/lib/constants/query-key'
+
+type WordAttr = {
+  id: number
+  word: string
+}
 
 export function WordsInput({
-  value,
   onValueChange,
-  inForm,
   onBlur,
   className,
+  value,
   ...props
-}: ButtonProps & {
-  value?: string
+}: Omit<ButtonProps, 'value'> & {
   onValueChange?: (value: string) => void
-  inForm?: boolean
   onBlur?: () => void
+  value?: string
 }) {
-  const [_value, setValue] = useUncontrolled({
-    defaultValue: '',
-    value: value,
-    onValueChange: onValueChange,
-  })
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
+  const [key] = useDebounce(q, 600)
+  const [_value, setValue] = useUncontrolled({
+    defaultValue: '',
+    value,
+    onValueChange,
+  })
 
-  const Comp = inForm ? FormControl : Fragment
+  const queryClient = useQueryClient()
+  const currList = queryClient.getQueryData<InfiniteData<ResFind<WordAttr[]>>>([
+    QUERY_KEYS.onlyWord,
+    key,
+  ])
+
+  const searchData = useQuery({
+    queryKey: [QUERY_KEYS.partOfSpeeches],
+    queryFn: () =>
+      apiWithToken.get<ResFindOne<WordAttr>>(
+        API_INPUTS.onlyWord + '/' + _value
+      ),
+    enabled: Boolean(Number(_value)),
+  })
 
   return (
     <Popover
@@ -73,18 +99,22 @@ export function WordsInput({
       })}
     >
       <PopoverTrigger asChild>
-        <Comp>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={cn('justify-between', className)}
-            {...props}
-          >
-            {value || 'Select words'}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </Comp>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn('justify-between', className)}
+          {...props}
+        >
+          {!Number(_value)
+            ? 'Select words'
+            : currList
+              ? currList?.pages
+                  .flatMap((d) => d.data.list)
+                  .find((e) => e.id === Number(_value))?.word
+              : searchData.data?.data.word}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="p-0">
         <Command shouldFilter={false}>
@@ -96,11 +126,12 @@ export function WordsInput({
             inputMode="search"
           />
           <WordList
-            q={q}
-            value={value}
-            onValueChange={(currentValue) => {
-              setValue(currentValue === value ? '' : currentValue)
+            q={key}
+            value={_value}
+            onValueChange={(value) => {
+              setValue(value)
               setOpen(false)
+              onBlur?.()
             }}
           />
         </Command>
@@ -117,14 +148,17 @@ function WordList(props: {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const searchData = useInfiniteQuery({
-    queryKey: ['/api/dictionary/words', props.q],
+    queryKey: [API_INPUTS.onlyWord, props.q],
     queryFn: (ctx) =>
-      nextApi.get<ResFind<string[]>>('/api/dictionary/words', {
-        params: {
-          q: props.q,
-          page: ctx.pageParam,
-        },
-      }),
+      apiWithToken.get<ResFind<{ id: number; word: string }[]>>(
+        API_INPUTS.onlyWord,
+        {
+          params: {
+            key: props.q,
+            page: ctx.pageParam,
+          },
+        }
+      ),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam: number) => {
       if (
@@ -176,7 +210,7 @@ function WordList(props: {
             : undefined,
       }}
     >
-      <CommandList className="h-svh">
+      <CommandList className="h-svh p-1">
         {!props.q ? (
           <Message className="text-center py-6 px-3">
             Let&apos;s search word
@@ -189,14 +223,7 @@ function WordList(props: {
           </Message.Error>
         ) : (
           <Fragment>
-            {flatData.length === 0 && (
-              <CommandGroup>
-                <CommandItem value={props.q} onSelect={props.onValueChange}>
-                  <Check className={cn('mr-2 h-4 w-4 opacity-100')} />
-                  {props.q}
-                </CommandItem>
-              </CommandGroup>
-            )}
+            <CommandEmpty>No results found</CommandEmpty>
             <VirtualizerContent asChild>
               <CommandGroup>
                 <VirtualizerTrack>
@@ -208,20 +235,22 @@ function WordList(props: {
                         <CommandItem
                           style={style}
                           disabled={isLoaderRow}
-                          value={item}
+                          value={String(item.id)}
                           onSelect={props.onValueChange}
                         >
                           <Check
                             className={cn(
                               'mr-2 h-4 w-4',
-                              props.value === item ? 'opacity-100' : 'opacity-0'
+                              props.value === String(item.id)
+                                ? 'opacity-100'
+                                : 'opacity-0'
                             )}
                           />
                           {isLoaderRow
                             ? searchData.hasNextPage
                               ? 'Loading more...'
                               : 'Nothing more to load'
-                            : item}
+                            : item.word}
                         </CommandItem>
                       </VirtualizerItem>
                     )

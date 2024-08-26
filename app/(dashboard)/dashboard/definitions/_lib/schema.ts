@@ -4,8 +4,8 @@ import { userSchema } from '../../users/_lib/schema'
 
 export const attrSchema = z.object({
   id: z.number(),
-  definition: z.string(),
-  translate: z.string().optional(),
+  translate: z.string().min(1, 'require'),
+  definition: z.string().optional(),
   description: z.string().optional(),
   image: z.string().optional(),
   meaningId: z.number().min(1, 'greater than 0').optional(),

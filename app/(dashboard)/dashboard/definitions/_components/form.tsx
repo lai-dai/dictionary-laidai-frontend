@@ -96,26 +96,6 @@ export function DefinitionsForm({
         }}
       >
         <div className="grid gap-6">
-          <form.Field name="definition">
-            {(field) => (
-              <FormItem field={field}>
-                <FormLabel>
-                  definition:{' '}
-                  {field.state.meta.isValidating && <Spinner size={'xs'} />}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          </form.Field>
           <form.Field name="translate">
             {(field) => (
               <FormItem field={field}>
@@ -136,6 +116,28 @@ export function DefinitionsForm({
               </FormItem>
             )}
           </form.Field>
+
+          <form.Field name="definition">
+            {(field) => (
+              <FormItem field={field}>
+                <FormLabel>
+                  definition:{' '}
+                  {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          </form.Field>
+
           <form.Field name="image">
             {(field) => (
               <FormItem field={field}>

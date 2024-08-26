@@ -155,12 +155,12 @@ export function DefinitionsDataTable({
         size: 60,
       },
       {
-        accessorKey: 'definition',
-        header: 'definition',
-      },
-      {
         accessorKey: 'translate',
         header: 'translate',
+      },
+      {
+        accessorKey: 'definition',
+        header: 'definition',
       },
       {
         accessorKey: 'description',
@@ -318,7 +318,10 @@ export function DefinitionsDataTable({
                     searchData.refetch()
                   }}
                   defaultValues={{
+                    translate: '',
+                    description: '',
                     definition: '',
+                    image: '',
                     meaningId: initFilters.meaningId,
                     wordId: initFilters.wordId,
                   }}

@@ -21,7 +21,7 @@ export default async function Page({ params }: { params: { word: string } }) {
     await queryClient.prefetchQuery({
       queryKey: [QUERY_KEYS.dictionary, params.word],
       queryFn: () =>
-        serverApiWithToken.get(API_INPUTS.dictionary + '/' + params.word),
+        serverApiWithToken.get(`${API_INPUTS.dictionary}/${params.word}`),
     })
   }
 
