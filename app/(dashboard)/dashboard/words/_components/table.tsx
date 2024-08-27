@@ -163,6 +163,7 @@ export function WordsDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
+                  id={info.row.original.id}
                 >
                   <Button
                     variant={'secondary'}
@@ -422,11 +423,13 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  id,
 }: {
   children?: ReactNode
   defaultValues?: AttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  id?: number
 }) {
   const [open, setOpen] = useState(false)
   return (

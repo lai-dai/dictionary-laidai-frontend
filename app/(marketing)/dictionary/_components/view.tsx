@@ -111,11 +111,13 @@ export function SearchDictionary({
             <Message.Error className="py-6 px-3">
               {getErrorMessage(searchData.error)}
             </Message.Error>
-            {session?.user.role === 'admin' && <AddButton word={key} />}
           </Center>
         ) : (
           <CommandGroup>
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>
+              <p>No results found.</p>
+              {session?.user.role === 'admin' && <AddButton word={key} />}
+            </CommandEmpty>
             {searchData.data?.pages
               .flatMap((page) => page.data?.list || [])
               .map((item) => {

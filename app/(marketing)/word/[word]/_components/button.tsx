@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { AttrType } from '@/app/(dashboard)/dashboard/words/_lib/type'
+import { Spinner } from '@/components/ui/spinner'
 
 export function AddButton({ word }: { word: string }) {
   const router = useRouter()
@@ -35,6 +36,7 @@ export function AddButton({ word }: { word: string }) {
         )
       }}
     >
+      {createData.isPending && <Spinner className="size-4 mr-3" />}
       Add {word}
     </Button>
   )

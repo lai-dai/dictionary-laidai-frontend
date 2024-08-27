@@ -178,6 +178,7 @@ export function PartOfSpeechesDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
+                  id={info.row.original.id}
                 >
                   <Button
                     variant={'secondary'}
@@ -459,12 +460,14 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  id,
 }: {
   children?: ReactNode
   total?: number
   defaultValues?: PartOfSpeechAttr
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  id?: number
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -489,6 +492,7 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
+          id={String(id)}
         />
       </DialogContent>
     </Dialog>

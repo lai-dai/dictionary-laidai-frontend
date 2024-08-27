@@ -156,6 +156,7 @@ export function WordsWordsLinksDataTable({
                     // searchData.refetch()
                     onSubmitSuccessfully?.()
                   }}
+                  id={info.row.original.id}
                 >
                   <Button
                     variant={'secondary'}
@@ -425,11 +426,13 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  id,
 }: {
   children?: ReactNode
   defaultValues?: CreateAttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  id?: number
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -450,6 +453,7 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
+          id={String(id)}
         />
       </DialogContent>
     </Dialog>

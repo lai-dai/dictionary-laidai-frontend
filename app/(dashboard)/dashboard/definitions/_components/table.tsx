@@ -73,13 +73,11 @@ export function DefinitionsDataTable({
     updatedAt: false,
     description: false,
   },
-  id,
 }: {
   navigateMode?: 'push' | 'replace' | 'none'
   createUpdateInModal?: boolean
   initFilters?: GetAllAttrType
   initColumnVisibility?: VisibilityState
-  id?: string
 }) {
   const pathname = usePathname()
   const [columnVisibility, setColumnVisibility] =
@@ -212,7 +210,7 @@ export function DefinitionsDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
-                  id={id}
+                  id={String(info.row.original.id)}
                 >
                   <Button
                     variant={'secondary'}
@@ -333,7 +331,6 @@ export function DefinitionsDataTable({
                     meaningId: initFilters.meaningId,
                     wordId: initFilters.wordId,
                   }}
-                  id={id}
                 >
                   <Button variant="outline" size={'sm'}>
                     <Plus className="size-4 mr-2" />

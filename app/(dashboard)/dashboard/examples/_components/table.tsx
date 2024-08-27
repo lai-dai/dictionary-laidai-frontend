@@ -175,6 +175,7 @@ export function ExamplesDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
+                  id={info.row.original.id}
                 >
                   <Button
                     variant={'secondary'}
@@ -441,11 +442,13 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  id,
 }: {
   children?: ReactNode
   defaultValues?: CreateAttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  id?: number
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -466,6 +469,7 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
+          id={String(id)}
         />
       </DialogContent>
     </Dialog>

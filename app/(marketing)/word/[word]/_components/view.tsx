@@ -234,7 +234,7 @@ export function WordView({
               return (
                 <div
                   className={
-                    'absolute left-0 bottom-0 w-full min-h-24 text-slate-300 z-50 bg-black/50'
+                    'absolute left-0 bottom-0 w-full min-h-24 text-slate-300 z-50 bg-black/50 grid place-content-center'
                   }
                 >
                   <p className="text-center">
@@ -301,7 +301,7 @@ export function WordView({
                               )}
 
                               {itm.image && (
-                                <div className="w-56 max-h-60">
+                                <div className="w-56 max-h-60 overflow-hidden rounded-xl">
                                   <PhotoItem>
                                     <Image
                                       src={itm.image}

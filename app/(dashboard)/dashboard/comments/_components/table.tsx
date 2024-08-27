@@ -161,6 +161,7 @@ export function CommentsDataTable({
                   onSubmitSuccess={() => {
                     searchData.refetch()
                   }}
+                  id={String(info.row.original.id)}
                 >
                   <Button
                     variant={'secondary'}
@@ -426,11 +427,13 @@ function CreateUpdateDataDialog({
   defaultValues,
   isCreated,
   onSubmitSuccess,
+  id
 }: {
   children?: ReactNode
   defaultValues?: CreateAttrType
   isCreated?: boolean
   onSubmitSuccess?: () => void
+  id?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -451,6 +454,7 @@ function CreateUpdateDataDialog({
             onSubmitSuccess?.()
             setOpen(false)
           }}
+          id={id}
         />
       </DialogContent>
     </Dialog>
