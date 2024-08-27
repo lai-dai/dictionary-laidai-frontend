@@ -14,6 +14,7 @@ import {
 import { isMobile } from './device-detect'
 import { WordView } from '@/app/(marketing)/word/[word]/_components/view'
 import { usePathname } from 'next/navigation'
+import { Card } from './ui/card'
 
 export function SelectionTextPopover() {
   const [open, setOpen] = useState(false)
@@ -109,7 +110,7 @@ export function SelectionTextPopover() {
         }}
         {...getFloatingProps()}
       >
-        <div className="max-h-[50vh] overflow-y-auto w-96">
+        <Card className="max-h-[50vh] overflow-y-auto w-96 shadow-none">
           <WordView
             key={key}
             word={key.toLowerCase()}
@@ -117,8 +118,9 @@ export function SelectionTextPopover() {
             staleTime={0}
             gcTime={0}
             queryKey={['floating', key]}
+            className={'border-0'}
           />
-        </div>
+        </Card>
       </div>
     )
   )

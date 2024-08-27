@@ -83,6 +83,7 @@ export function WordView({
   gcTime,
   queryKey = [QUERY_KEYS.dictionary, word],
   hidden,
+  className,
 }: {
   word: string
   enabled?: boolean
@@ -90,6 +91,7 @@ export function WordView({
   gcTime?: number
   queryKey?: string[]
   hidden?: boolean
+  className?: string
 }) {
   const { data: session } = useSession()
 
@@ -113,7 +115,7 @@ export function WordView({
   if (searchData.status === 'pending') {
     return (
       <Center>
-        <Card className="shadow-none">
+        <Card className={cn('shadow-none', className)}>
           <CardHeader>
             <Spinner size={'lg'} />
           </CardHeader>
@@ -123,7 +125,7 @@ export function WordView({
   } else if (searchData.status === 'error') {
     return (
       <Center>
-        <Card className="shadow-none">
+        <Card className={cn('shadow-none', className)}>
           <CardHeader>
             <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
           </CardHeader>
@@ -145,7 +147,7 @@ export function WordView({
   if (hidden) return null
 
   return (
-    <Card className="shadow-none">
+    <Card className={cn('shadow-none', className)}>
       <CardHeader className="p-2 md:p-4">
         <div className="flex items-center justify-between gap-6">
           <CardTitle className="capitalize">{data.word}</CardTitle>
@@ -391,12 +393,12 @@ export function WordView({
       </CardContent>
 
       <CardFooter className="p-2 md:p-4 justify-between">
-        <div className="text-xs flex items-center gap-3 text-muted-foreground">
-          Created By:{' '}
+        <div className="text-xs flex items-center gap-1 text-muted-foreground">
+          Created By:
           {data.createdBy.role === 'admin' ? (
             <p>admin</p>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
               <Avatar>
                 <AvatarImage
                   src={currentAvatar?.image}
@@ -406,7 +408,7 @@ export function WordView({
                   {firstLetterBuilder(data.createdBy.name)}
                 </AvatarFallback>
               </Avatar>
-              <p>{data.createdBy.name}</p>
+              <p className="max-w-32 truncate">{data.createdBy.name}</p>
             </div>
           )}
         </div>

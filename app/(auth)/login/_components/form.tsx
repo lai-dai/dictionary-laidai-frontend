@@ -32,11 +32,13 @@ import { LoginAttr } from '../_lib/type'
 import { loginSchema } from '../_lib/schema'
 import { onSubmitInvalid } from '@/lib/utils/on-submit-invalid'
 import { getErrorMessage } from '@/lib/utils/error-message'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export function LoginForm() {
   const router = useRouter()
   const t = useTranslations()
+  const searchParams = useSearchParams()
+
   const form = useForm<LoginAttr, Validator<LoginAttr>>({
     defaultValues: {
       email: '',
@@ -54,7 +56,7 @@ export function LoginForm() {
       try {
         const res = await signIn('credentials', { ...value, redirect: false })
         if (res?.ok) {
-          router.replace('/')
+          router.replace(searchParams.get('callbackUrl') || '/')
           router.refresh()
           toast.success(`${t('Login')} ${t('Success')}`)
         } else {

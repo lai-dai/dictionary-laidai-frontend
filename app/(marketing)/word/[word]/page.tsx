@@ -72,7 +72,9 @@ export default async function Page({ params }: { params: { word: string } }) {
                 </CardTitle>
                 <div>
                   <Button asChild>
-                    <Link href={'/login'}>Login</Link>
+                    <Link href={`/login?callbackUrl=/word/${params.word}`}>
+                      Login
+                    </Link>
                   </Button>
                 </div>
               </CardHeader>
