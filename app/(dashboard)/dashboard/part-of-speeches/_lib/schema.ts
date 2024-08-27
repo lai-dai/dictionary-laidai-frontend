@@ -7,7 +7,7 @@ export const partOfSpeechSchema = z.object({
   order: z.number().min(1, 'greater than 1'),
   abbreviation: z.string().optional(),
   translate: z.string().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 })

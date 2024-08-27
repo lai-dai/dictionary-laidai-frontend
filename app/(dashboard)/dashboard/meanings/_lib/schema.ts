@@ -4,7 +4,7 @@ import { userSchema } from '../../users/_lib/schema'
 
 export const attrSchema = z.object({
   id: z.number(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   partOfSpeechId: z.number().min(1, 'greater than 0').optional(),
   wordId: z.number().min(1, 'greater than 0').optional(),
   createdAt: z.string().optional(),

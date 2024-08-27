@@ -6,7 +6,7 @@ export const attrSchema = z.object({
   id: z.number(),
   translate: z.string().min(1, 'require'),
   definition: z.string().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   image: z.string().optional(),
   meaningId: z.number().min(1, 'greater than 0').optional(),
   wordId: z.number().min(1, 'greater than 0').optional(),

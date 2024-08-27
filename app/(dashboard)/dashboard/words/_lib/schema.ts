@@ -5,7 +5,7 @@ import { commonGetAllSchema } from '@/lib/schemas/common'
 export const attrSchema = z.object({
   id: z.number(),
   word: z.string().min(1, 'require'),
-  description: z.string(),
+  description: z.string().nullable().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
   createdBy: userSchema,

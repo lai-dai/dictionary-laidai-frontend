@@ -6,7 +6,7 @@ export const attrSchema = z.object({
   id: z.number(),
   phonetic: z.string().min(1, 'require'),
   audio: z.string().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   wordId: z.number().min(1, 'greater than 0').optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),

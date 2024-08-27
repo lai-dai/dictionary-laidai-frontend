@@ -82,6 +82,7 @@ export default function Page() {
                   onFocus={(e) => {
                     e.target.select()
                   }}
+                  autoFocus
                 />
                 {!!filters.key && (
                   <Button
