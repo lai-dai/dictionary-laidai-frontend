@@ -96,11 +96,11 @@ export function DefinitionsForm({
         }}
       >
         <div className="grid gap-6">
-          <form.Field name="translate">
+          <form.Field name="definition">
             {(field) => (
               <FormItem field={field}>
                 <FormLabel>
-                  translate:{' '}
+                  definition:{' '}
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>
@@ -117,11 +117,11 @@ export function DefinitionsForm({
             )}
           </form.Field>
 
-          <form.Field name="definition">
+          <form.Field name="translate">
             {(field) => (
               <FormItem field={field}>
                 <FormLabel>
-                  definition:{' '}
+                  translate:{' '}
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>

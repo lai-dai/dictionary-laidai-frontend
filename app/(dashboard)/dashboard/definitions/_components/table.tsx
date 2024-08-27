@@ -175,6 +175,10 @@ export function DefinitionsDataTable({
       {
         accessorKey: 'image',
         header: 'image',
+        maxSize: 200,
+        cell: ({ getValue }) => (
+          <p className="truncate">{getValue<string>()}</p>
+        ),
       },
       {
         accessorKey: 'createdBy.name',

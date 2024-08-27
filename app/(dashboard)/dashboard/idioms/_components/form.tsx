@@ -62,6 +62,7 @@ export function IdiomsForm({
     defaultValues: defaultValues || {
       idiom: '',
       definition: '',
+      translate: '',
       description: '',
       wordId: undefined,
     },
@@ -70,15 +71,17 @@ export function IdiomsForm({
       onSubmit: createAttrSchema,
     },
     onSubmitInvalid: ({ value, formApi }) => {
-      const parse = createAttrSchema.safeParse(value)
-      onSubmitInvalid(parse, formApi)
+      const safeParse = createAttrSchema.safeParse(value)
+      onSubmitInvalid(safeParse, formApi)
     },
     onSubmit: async ({ value }) => {
+      const data = createAttrSchema.parse(value)
+
       if (isCreated) {
-        const res = await createData.mutateAsync(value)
+        const res = await createData.mutateAsync(data)
         toast.success(res?.message)
       } else {
-        const res = await updateData.mutateAsync(value)
+        const res = await updateData.mutateAsync(data)
         toast.success(res?.message)
       }
       onSubmitSuccess?.()
@@ -119,6 +122,26 @@ export function IdiomsForm({
               <FormItem field={field}>
                 <FormLabel>
                   definition:{' '}
+                  {field.state.meta.isValidating && <Spinner size={'xs'} />}
+                </FormLabel>
+                <FormControl>
+                  <TextareaAutoSize
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          </form.Field>
+
+          <form.Field name="translate">
+            {(field) => (
+              <FormItem field={field}>
+                <FormLabel>
+                  translate:{' '}
                   {field.state.meta.isValidating && <Spinner size={'xs'} />}
                 </FormLabel>
                 <FormControl>

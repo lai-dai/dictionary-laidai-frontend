@@ -115,10 +115,8 @@ export function PhoneticsForm({
                     const [data] = res.data
 
                     data?.phonetics?.forEach((item: any) => {
-                      if (!phonetic) {
-                        phonetic = item.text
-                        audio = item.audio
-                      }
+                      if (!phonetic) phonetic = item.text
+                      if (!audio) audio = item.audio
                     })
 
                     if (phonetic) {

@@ -36,6 +36,7 @@ import { MeaningsDataTable } from '../../meanings/_components/table'
 import { NameWordsInput } from '@/components/name-word-input'
 import { WordsWordsLinksDataTable } from '../../word-word-links/table'
 import { QUERY_KEYS } from '@/lib/constants/query-key'
+import { getErrorMessage } from '@/lib/utils/error-message'
 
 export function WordForm({
   isCreated,
@@ -81,16 +82,20 @@ export function WordForm({
       onSubmitInvalid(parse, formApi)
     },
     onSubmit: async ({ value }) => {
-      const data = createAttrSchema.parse(value)
-      if (isCreated) {
-        const res = await createData.mutateAsync(data)
+      try {
+        const data = createAttrSchema.parse(value)
+        if (isCreated) {
+          const res = await createData.mutateAsync(data)
 
-        toast.success('Create successfully')
-        onSubmitCreateSuccess?.(res.data)
-      } else {
-        const res = await updateData.mutateAsync(data)
-        toast.success('Update successfully')
-        onSubmitUpdateSuccess?.(res.data)
+          toast.success('Create successfully')
+          onSubmitCreateSuccess?.(res.data)
+        } else {
+          const res = await updateData.mutateAsync(data)
+          toast.success('Update successfully')
+          onSubmitUpdateSuccess?.(res.data)
+        }
+      } catch (error) {
+        toast.error(getErrorMessage(error, 'Error'))
       }
     },
   })

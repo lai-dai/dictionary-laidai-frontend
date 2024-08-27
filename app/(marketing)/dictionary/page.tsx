@@ -79,6 +79,9 @@ export default function Page() {
                   onValueChange={(key) => setFilters({ key })}
                   placeholder="Nhập yêu cầu của bạn"
                   className="h-16 pr-12"
+                  onFocus={(e) => {
+                    e.target.select()
+                  }}
                 />
                 {!!filters.key && (
                   <Button
@@ -92,18 +95,18 @@ export default function Page() {
                 )}
               </div>
               <CommandList className="max-h-none overflow-hidden">
-                {!key ? (
-                  <Center>
-                    <Message className="text-center py-6 px-3">
+                {!filters.key ? (
+                  <Center className="py-6 px-3">
+                    <Message className="text-center">
                       Let&apos;s search word
                     </Message>
                   </Center>
                 ) : searchData.status === 'pending' ? (
-                  <Center>
+                  <Center className="py-6 px-3">
                     <Spinner size={'xs'} />
                   </Center>
                 ) : searchData.status === 'error' ? (
-                  <Center>
+                  <Center className="py-6 px-3">
                     <Message.Error className="text-center py-6 px-3">
                       {getErrorMessage(searchData.error)}
                     </Message.Error>

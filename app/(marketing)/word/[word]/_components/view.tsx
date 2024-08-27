@@ -71,16 +71,36 @@ import { API_INPUTS } from '@/lib/constants/api-input'
 import { Badge } from '@/components/ui/badge'
 import { AudioButton } from '@/components/audio-button'
 import Link from 'next/link'
+import { PhotoItem, Photos } from '@/components/ui/photo'
+import { Image } from '@/components/image'
+import { AddButton } from './button'
 
-export function WordView({ word }: { word: string }) {
+export function WordView({
+  word,
+  enabled,
+  staleTime,
+  gcTime,
+  queryKey = [QUERY_KEYS.dictionary, word],
+  hidden,
+}: {
+  word: string
+  enabled?: boolean
+  staleTime?: number
+  gcTime?: number
+  queryKey?: string[]
+  hidden?: boolean
+}) {
   const { data: session } = useSession()
+
   const searchData = useQuery({
-    queryKey: [QUERY_KEYS.dictionary, word],
+    queryKey,
     queryFn: () =>
       apiWithToken.get<ResFindOne<WordAttr>>(
         `${API_INPUTS.dictionary}/${word}`
       ),
-    enabled: false,
+    enabled: Boolean(enabled) && Boolean(word),
+    staleTime,
+    gcTime,
   })
 
   const [isFavorite, setIsFavorite] = useState(!!searchData.data?.data.favorite)
@@ -92,17 +112,32 @@ export function WordView({ word }: { word: string }) {
   if (searchData.status === 'pending') {
     return (
       <Center>
-        <Spinner size={'lg'} />
+        <Card className="shadow-none">
+          <CardHeader>
+            <Spinner size={'lg'} />
+          </CardHeader>
+        </Card>
       </Center>
     )
   } else if (searchData.status === 'error') {
     return (
       <Center>
-        <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
+        <Card className="shadow-none">
+          <CardHeader>
+            <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
+          </CardHeader>
+          {session?.user.role === 'admin' && (
+            <CardFooter>
+              <AddButton word={word} />
+            </CardFooter>
+          )}
+        </Card>
       </Center>
     )
   }
   const data = searchData.data?.data
+
+  if (hidden) return null
 
   return (
     <Card className="shadow-none">
@@ -130,16 +165,16 @@ export function WordView({ word }: { word: string }) {
               setIsFavorite(!isFavorite)
             }}
             disabled={!session?.user || addFavorite.isPending}
-            variant={'ghost'}
-            size={'icon'}
+            variant={'outline'}
           >
             {addFavorite.isPending ? (
               <Spinner className="size-3" />
             ) : isFavorite ? (
-              <BookmarkFilledIcon className="size-5" />
+              <BookmarkFilledIcon className="size-5 mr-3" />
             ) : (
-              <BookmarkIcon className="size-5" />
+              <BookmarkIcon className="size-5 mr-3" />
             )}
+            Save
           </Button>
         </div>
         {data.phonetics.length > 0 && (
@@ -152,12 +187,9 @@ export function WordView({ word }: { word: string }) {
                 >
                   <p>{item.phonetic}</p>
                   {item.audio && (
-                    <AudioButton
-                      src={item.audio}
-                      size={'icon'}
-                      variant={'ghost'}
-                    >
-                      <AudioLines className="size-5" />
+                    <AudioButton src={item.audio} variant={'ghost'}>
+                      <AudioLines className="size-5 mr-3" />
+                      Audio
                     </AudioButton>
                   )}
                 </div>
@@ -174,7 +206,11 @@ export function WordView({ word }: { word: string }) {
               <p>
                 View:
                 {data.relationship.map((item) => (
-                  <Link href={`/word/${item.word}`} className="underline ml-2">
+                  <Link
+                    key={item.id}
+                    href={`/word/${item.word}`}
+                    className="underline ml-2"
+                  >
                     {item.word}
                   </Link>
                 ))}
@@ -184,78 +220,114 @@ export function WordView({ word }: { word: string }) {
         )}
 
         {data.meanings.length > 0 && (
-          <Card className="shadow-none">
-            <CardHeader>
-              <CardTitle title="meanings" className="font-semibold">
-                Meanings:{' '}
-              </CardTitle>
-            </CardHeader>
-            {data.meanings.map((item) => {
+          <Photos
+            overlayRender={({ images, index }) => {
               return (
-                <CardContent key={item.id} className="space-y-3">
-                  <h4 className="space-x-1.5">
-                    <Badge>{item.partOfSpeech.name || '-'}</Badge>
-                    <Badge variant={'outline'}>
-                      {item.partOfSpeech.abbreviation}
-                    </Badge>{' '}
-                    = {item.partOfSpeech.translate}
-                  </h4>
-
-                  {item.description && (
-                    <Alert>
-                      <NotebookPen className="size-4" />
-                      <AlertTitle>Note</AlertTitle>
-                      <AlertDescription>
-                        <div
-                          className="prose prose-slate dark:prose-invert prose-sm"
-                          dangerouslySetInnerHTML={{ __html: item.description }}
-                        ></div>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  <ol className="list-decimal pl-4">
-                    {item.definitions.length > 0 &&
-                      item.definitions.map((itm, idx) => {
-                        return (
-                          <li key={itm.id} className="space-y-2">
-                            <p>
-                              {itm.definition ? itm.definition + ' = ' : ''}
-                              {itm.translate}
-                            </p>
-                            {itm.description && (
-                              <Alert>
-                                <NotebookPen className="size-4" />
-                                <AlertTitle>Note</AlertTitle>
-                                <AlertDescription>
-                                  <div
-                                    className="prose prose-slate dark:prose-invert prose-sm"
-                                    dangerouslySetInnerHTML={{
-                                      __html: itm.description,
-                                    }}
-                                  ></div>
-                                </AlertDescription>
-                              </Alert>
-                            )}
-
-                            <ul className="list-disc list-inside pl-2 space-y-1.5">
-                              {itm.examples.length > 0 &&
-                                itm.examples.map((it) => {
-                                  return (
-                                    <li key={it.id}>
-                                      {it.sentence} = {it.translate}
-                                    </li>
-                                  )
-                                })}
-                            </ul>
-                          </li>
-                        )
-                      })}
-                  </ol>
-                </CardContent>
+                <div
+                  className={
+                    'absolute left-0 bottom-0 w-full min-h-24 text-slate-300 z-50 bg-black/50'
+                  }
+                >
+                  <p className="text-center">
+                    {(images[index].originRef?.current as HTMLImageElement).alt}
+                  </p>
+                </div>
               )
-            })}
-          </Card>
+            }}
+          >
+            <Card className="shadow-none">
+              <CardHeader>
+                <CardTitle title="meanings" className="font-semibold">
+                  Meanings:{' '}
+                </CardTitle>
+              </CardHeader>
+              {data.meanings.map((item) => {
+                return (
+                  <CardContent key={item.id} className="space-y-3">
+                    <h4 className="space-x-1.5">
+                      <Badge>{item.partOfSpeech.name || '-'}</Badge>
+                      <Badge variant={'outline'}>
+                        {item.partOfSpeech.abbreviation}
+                      </Badge>{' '}
+                      = {item.partOfSpeech.translate}
+                    </h4>
+
+                    {item.description && (
+                      <Alert>
+                        <NotebookPen className="size-4" />
+                        <AlertTitle>Note</AlertTitle>
+                        <AlertDescription>
+                          <div
+                            className="prose prose-slate dark:prose-invert prose-sm"
+                            dangerouslySetInnerHTML={{
+                              __html: item.description,
+                            }}
+                          ></div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    <ol className="list-decimal pl-4">
+                      {item.definitions.length > 0 &&
+                        item.definitions.map((itm, idx) => {
+                          return (
+                            <li key={itm.id} className="space-y-2">
+                              <p>
+                                {itm.definition ? itm.definition + ' = ' : ''}
+                                {itm.translate || '-'}
+                              </p>
+                              {itm.description && (
+                                <Alert>
+                                  <NotebookPen className="size-4" />
+                                  <AlertTitle>Note</AlertTitle>
+                                  <AlertDescription>
+                                    <div
+                                      className="prose prose-slate dark:prose-invert prose-sm"
+                                      dangerouslySetInnerHTML={{
+                                        __html: itm.description,
+                                      }}
+                                    ></div>
+                                  </AlertDescription>
+                                </Alert>
+                              )}
+
+                              {itm.image && (
+                                <div className="w-56 max-h-60">
+                                  <PhotoItem>
+                                    <Image
+                                      src={itm.image}
+                                      alt={
+                                        (itm.definition
+                                          ? itm.definition + ' = '
+                                          : '') + itm.translate || '-'
+                                      }
+                                      title={itm.definition}
+                                      className="object-cover"
+                                    />
+                                  </PhotoItem>
+                                </div>
+                              )}
+
+                              <ul className="list-disc list-inside pl-2 space-y-1.5">
+                                {itm.examples.length > 0 &&
+                                  itm.examples.map((it) => {
+                                    return (
+                                      <li key={it.id}>
+                                        {it.sentence ? it.sentence + ' = ' : ''}
+                                        {it.translate || '-'}
+                                      </li>
+                                    )
+                                  })}
+                              </ul>
+                            </li>
+                          )
+                        })}
+                    </ol>
+                  </CardContent>
+                )
+              })}
+            </Card>
+          </Photos>
         )}
 
         {data.idioms.length > 0 && (

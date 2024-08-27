@@ -36,13 +36,14 @@ export function PhotoItem({
 }: Omit<PhotoViewProps, 'children'> & {
   children: ReactElement
 }) {
-  const src = isValidElement(children)
-    ? delve(
-        children?.props as object,
-        'data-src',
-        delve(children?.props as object, 'src')
-      )
-    : undefined
+  const src =
+    !props.render && isValidElement(children)
+      ? delve(
+          children?.props as object,
+          'data-src',
+          delve(children?.props as object, 'src')
+        )
+      : undefined
 
   return (
     <PhotoView src={src} {...props}>
