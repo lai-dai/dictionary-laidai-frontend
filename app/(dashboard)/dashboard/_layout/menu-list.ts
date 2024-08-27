@@ -180,13 +180,13 @@ export function getMenuList(pathname: string): Group[] {
           icon: Users,
           submenus: [],
         },
-        {
-          href: '/dashboard/settings',
-          label: 'Settings',
-          active: pathname.startsWith('/dashboard/settings'),
-          icon: Settings,
-          submenus: [],
-        },
+        // {
+        //   href: '/dashboard/settings',
+        //   label: 'Settings',
+        //   active: pathname.startsWith('/dashboard/settings'),
+        //   icon: Settings,
+        //   submenus: [],
+        // },
       ],
     },
   ]

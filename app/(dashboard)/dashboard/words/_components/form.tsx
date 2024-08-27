@@ -182,7 +182,7 @@ export function WordForm({
                     <FormControl>
                       <TinyEditor
                         textareaName={field.name}
-                        value={field.state.value}
+                        value={field.state.value || ''}
                         onBlur={field.handleBlur}
                         onEditorChange={(value) => field.handleChange(value)}
                       />

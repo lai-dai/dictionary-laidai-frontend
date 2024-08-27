@@ -176,7 +176,7 @@ export function IdiomsForm({
                       <TinyEditor
                         init={{ min_height: 300 }}
                         textareaName={field.name}
-                        value={field.state.value}
+                        value={field.state.value || ''}
                         onBlur={field.handleBlur}
                         onEditorChange={(value) => field.handleChange(value)}
                       />

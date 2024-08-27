@@ -153,10 +153,6 @@ export function MeaningsDataTable({
         size: 60,
       },
       {
-        accessorKey: 'partOfSpeech.name',
-        header: 'partOfSpeech',
-      },
-      {
         accessorKey: 'description',
         header: 'Description',
         cell: (info) => (
@@ -165,6 +161,14 @@ export function MeaningsDataTable({
             dangerouslySetInnerHTML={{ __html: info.getValue<string>() }}
           ></div>
         ),
+      },
+      {
+        accessorKey: 'partOfSpeech.name',
+        header: 'partOfSpeech',
+      },
+      {
+        accessorKey: 'word.word',
+        header: 'word',
       },
       {
         accessorKey: 'createdBy.name',

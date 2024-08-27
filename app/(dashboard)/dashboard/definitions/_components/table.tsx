@@ -181,6 +181,10 @@ export function DefinitionsDataTable({
         ),
       },
       {
+        accessorKey: 'word.word',
+        header: 'word',
+      },
+      {
         accessorKey: 'createdBy.name',
         header: 'Created By',
       },

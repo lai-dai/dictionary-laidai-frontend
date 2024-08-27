@@ -175,6 +175,10 @@ export function IdiomsDataTable({
         ),
       },
       {
+        accessorKey: 'word.word',
+        header: 'word',
+      },
+      {
         accessorKey: 'createdBy.name',
         header: 'Created By',
       },
