@@ -150,7 +150,9 @@ export function WordView({
     <Card className={cn('shadow-none', className)}>
       <CardHeader className="p-2 md:p-4">
         <div className="flex items-center justify-between gap-6">
-          <CardTitle className="capitalize">{data.word}</CardTitle>
+          <CardTitle className="capitalize underline">
+            <Link href={`/word/${word}`}>{data.word}</Link>
+          </CardTitle>
 
           <Button
             onClick={() => {

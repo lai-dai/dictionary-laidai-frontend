@@ -110,7 +110,7 @@ export function SelectionTextPopover() {
         }}
         {...getFloatingProps()}
       >
-        <Card className="max-h-[50vh] overflow-y-auto w-96 shadow-none">
+        <Card className="max-h-[50vh] overflow-y-auto max-w-96 shadow-none">
           <WordView
             key={key}
             word={key.toLowerCase()}

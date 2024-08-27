@@ -85,14 +85,11 @@ export function PhoneticsForm({
       onSubmitSuccess?.()
     },
   })
-  const searchData = useQuery({
-    queryKey: ['search-phonetic', word],
-    queryFn: (data: any) =>
+  const searchData = useMutation({
+    mutationFn: () =>
       apiWithToken.get<any>(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`,
-        data
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
       ),
-    enabled: false,
   })
   return (
     <Form form={form}>
@@ -111,8 +108,8 @@ export function PhoneticsForm({
                   let phonetic: string
                   let audio: string
 
-                  searchData.refetch().then((res) => {
-                    const [data] = res.data
+                  searchData.mutateAsync().then((res) => {
+                    const [data] = res
 
                     data?.phonetics?.forEach((item: any) => {
                       if (!phonetic) phonetic = item.text
@@ -120,6 +117,7 @@ export function PhoneticsForm({
                     })
 
                     if (phonetic) {
+                      form.reset()
                       form.setFieldValue('phonetic', phonetic)
                     }
                     if (audio) {
@@ -131,7 +129,7 @@ export function PhoneticsForm({
                 }
               }}
             >
-              {searchData.isLoading && <Spinner className="mr-3" />}
+              {searchData.isPending && <Spinner className="size-4 mr-3" />}
               Auto generator
             </Button>
             <p className="text-sm text-muted-foreground">

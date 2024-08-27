@@ -12,7 +12,7 @@ export function SiteAside() {
     <aside className="hidden fixed top-0 left-0 h-screen w-64 border-r border-muted md:flex flex-col">
       <div className="flex items-center h-14 px-2">
         <Button variant="link" asChild>
-          <Link href="/">
+          <Link href="/" className="hover:no-underline">
             <Logo className="size-5 mr-3" />
             <h1
               className={cn(
