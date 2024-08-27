@@ -126,7 +126,7 @@ function PartOfSpeechList({
     queryKey: [QUERY_KEYS.partOfSpeeches, key],
     queryFn: (ctx) =>
       apiWithToken.get<ResFind<PartOfSpeechAttr[]>>(API_INPUTS.partOfSpeeches, {
-        params: { key, page: ctx.pageParam },
+        params: { key, page: ctx.pageParam, order: 'ASC' },
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => {

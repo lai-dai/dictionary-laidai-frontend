@@ -17,7 +17,7 @@ export interface PaginationParams {
   page?: number
 
   /** Total amount of pages */
-  total: number
+  pageCount: number
 
   /** Siblings amount on left/right side of selected page, defaults to 1 */
   siblings?: number
@@ -30,7 +30,7 @@ export interface PaginationParams {
 }
 
 export function usePagination({
-  total,
+  pageCount: total,
   siblings = 1,
   boundaries = 1,
   page,

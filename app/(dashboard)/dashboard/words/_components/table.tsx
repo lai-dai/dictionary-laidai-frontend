@@ -62,7 +62,7 @@ export function WordsDataTable({
   initFilters = {
     key: '',
     page: DEFAULT_PAGE,
-    limit: DEFAULT_PAGE_SIZE,
+    pageSize: DEFAULT_PAGE_SIZE,
   },
 }: {
   navigateMode?: 'push' | 'replace' | 'none'
@@ -335,12 +335,12 @@ export function WordsDataTable({
             onPageChange={(page) => {
               setFilters({ page })
             }}
-            onPageSizeChange={(limit) => {
-              setFilters({ limit })
+            onPageSizeChange={(pageSize) => {
+              setFilters({ pageSize })
             }}
             page={filters.page}
-            pageSize={filters.limit}
-            total={searchData.data?.data.pagination.total}
+            pageSize={filters.pageSize}
+            pageCount={searchData.data?.data.pagination.pageCount}
           />
         </div>
       )}

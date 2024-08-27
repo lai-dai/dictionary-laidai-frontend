@@ -117,7 +117,7 @@ export function WordView({
       <Center>
         <Card className={cn('shadow-none', className)}>
           <CardHeader>
-            <Spinner size={'lg'} />
+            <Spinner />
           </CardHeader>
         </Card>
       </Center>
@@ -150,7 +150,7 @@ export function WordView({
     <Card className={cn('shadow-none', className)}>
       <CardHeader className="p-2 md:p-4">
         <div className="flex items-center justify-between gap-6">
-          <CardTitle className="capitalize underline">
+          <CardTitle className="capitalize">
             <Link href={`/word/${word}`}>{data.word}</Link>
           </CardTitle>
 

@@ -35,12 +35,17 @@ import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 import { API_INPUTS } from '@/lib/constants/api-input'
 import { AVATARS } from '@/lib/data/avatars'
+import { useSession } from 'next-auth/react'
+import { AddButton } from '../../word/[word]/_components/button'
 
 export function SearchDictionary({
   onClickItem,
+  inDialog,
 }: {
   onClickItem?: () => void
+  inDialog?: boolean
 }) {
+  const { data: session } = useSession()
   const router = useRouter()
   const [filters, setFilters] = useUrlState({
     key: '',
@@ -102,10 +107,11 @@ export function SearchDictionary({
             <Spinner size={'xs'} />
           </Center>
         ) : searchData.status === 'error' ? (
-          <Center className="py-6 px-3">
-            <Message.Error className="text-center py-6 px-3">
+          <Center className="py-6 px-3 text-center space-y-3">
+            <Message.Error className="py-6 px-3">
               {getErrorMessage(searchData.error)}
             </Message.Error>
+            {session?.user.role === 'admin' && <AddButton word={key} />}
           </Center>
         ) : (
           <CommandGroup>
@@ -120,7 +126,11 @@ export function SearchDictionary({
                   <CommandItem
                     key={item.id}
                     onSelect={(value) => {
-                      router.push('/word/' + value)
+                      if (inDialog) {
+                        router.replace('/word/' + value)
+                      } else {
+                        router.push('/word/' + value)
+                      }
                       onClickItem?.()
                     }}
                     value={String(item.word)}

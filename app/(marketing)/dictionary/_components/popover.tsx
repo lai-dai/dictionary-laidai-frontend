@@ -29,6 +29,7 @@ export function SearchDictionaryPopover() {
         </DialogHeader>
 
         <SearchDictionary
+          inDialog
           onClickItem={() => {
             setOpen(false)
           }}

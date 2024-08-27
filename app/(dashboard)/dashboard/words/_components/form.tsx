@@ -150,7 +150,7 @@ export function WordForm({
                   initFilters={{
                     key: '',
                     page: DEFAULT_PAGE,
-                    limit: DEFAULT_PAGE_SIZE,
+                    pageSize: DEFAULT_PAGE_SIZE,
                     wordId: Number(id),
                   }}
                   onSubmitSuccessfully={() => {
@@ -207,7 +207,7 @@ export function WordForm({
                     initFilters={{
                       key: '',
                       page: DEFAULT_PAGE,
-                      limit: DEFAULT_PAGE_SIZE,
+                      pageSize: DEFAULT_PAGE_SIZE,
                       wordId: Number(id),
                     }}
                     initColumnVisibility={{
@@ -230,7 +230,7 @@ export function WordForm({
                     initFilters={{
                       key: '',
                       page: DEFAULT_PAGE,
-                      limit: DEFAULT_PAGE_SIZE,
+                      pageSize: DEFAULT_PAGE_SIZE,
                       wordId: Number(id),
                     }}
                     initColumnVisibility={{
@@ -252,7 +252,7 @@ export function WordForm({
                     initFilters={{
                       key: '',
                       page: DEFAULT_PAGE,
-                      limit: DEFAULT_PAGE_SIZE,
+                      pageSize: DEFAULT_PAGE_SIZE,
                       wordId: Number(id),
                     }}
                     initColumnVisibility={{
@@ -269,7 +269,7 @@ export function WordForm({
         <div
           className={cn(
             'bg-background flex flex-col gap-6 pt-6',
-            !inModal && 'sticky bottom-0'
+            !inModal && 'sticky bottom-0 z-10'
           )}
         >
           <form.Subscribe selector={(state) => state.errors}>

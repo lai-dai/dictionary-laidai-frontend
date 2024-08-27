@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: { word: string } }) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <MarketingPageContainer asChild>
+      <MarketingPageContainer key={params.word} asChild>
         <main className="space-y-6">
           <BackButton endContent={<SearchDictionaryPopover />} />
           <WordView word={params.word} />

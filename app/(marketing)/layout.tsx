@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import { SiteHeader } from './_layouts/site-header'
 import { SiteFooter } from './_layouts/site-footer'
-import { SelectionTextPopover } from '@/components/selection-text-popover'
 
 export default function MarketingLayout({
   children,
@@ -13,7 +12,6 @@ export default function MarketingLayout({
       <SiteHeader />
       {children}
       <SiteFooter />
-      <SelectionTextPopover />
     </div>
   )
 }

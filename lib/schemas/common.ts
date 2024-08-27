@@ -7,7 +7,7 @@ export const providerSchema = z.enum(['github', 'google', 'credentials'])
 
 export const commonGetAllSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
-  limit: z.number().default(DEFAULT_PAGE_SIZE),
+  pageSize: z.number().default(DEFAULT_PAGE_SIZE),
   key: z.string().optional(),
 })
 

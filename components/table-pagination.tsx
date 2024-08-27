@@ -28,14 +28,14 @@ export function TablePagination({
   pageSize,
   page,
   onPageChange,
-  total = 0,
+  pageCount = 1,
 }: {
   pageSizeOptions?: number[]
   pageSize?: number
   onPageSizeChange?: (pageSize: number) => void
   page?: number
   onPageChange?: (page: number) => void
-  total?: number
+  pageCount?: number
 }) {
   const [_pageSize, setPageSize] = useUncontrolled({
     defaultValue: DEFAULT_PAGE_SIZE,
@@ -44,7 +44,7 @@ export function TablePagination({
   })
   const pagination = usePagination({
     initialPage: DEFAULT_PAGE,
-    total,
+    pageCount,
     page,
     onPageChange,
   })
@@ -77,8 +77,7 @@ export function TablePagination({
           </Select>
         </div>
         <div className="flex items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
-          {table.getPageCount()}
+          Page {page} of {pageCount}
         </div>
         <div className="flex items-center space-x-2">
           <Button

@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import Link from 'next/link'
+import { SelectionTextPopover } from '@/components/selection-text-popover'
 
 export function Providers({ children }: { children?: React.ReactNode }) {
   const [queryClient] = React.useState(
@@ -42,6 +43,7 @@ export function Providers({ children }: { children?: React.ReactNode }) {
           <SessionProvider>
             {children}
             <AuthAlert />
+            <SelectionTextPopover />
           </SessionProvider>
         </TooltipProvider>
       </QueryClientProvider>
