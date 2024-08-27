@@ -16,7 +16,7 @@ import { Center } from '@/components/ui/center'
 import { Spinner } from '@/components/ui/spinner'
 import { Message } from '@/components/message'
 import { getErrorMessage } from '@/lib/utils/error-message'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { firstLetterBuilder } from '@/lib/utils/first-letter-builder'
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
@@ -74,6 +74,7 @@ import Link from 'next/link'
 import { PhotoItem, Photos } from '@/components/ui/photo'
 import { Image } from '@/components/image'
 import { AddButton } from './button'
+import { AVATARS } from '@/lib/data/avatars'
 
 export function WordView({
   word,
@@ -136,6 +137,10 @@ export function WordView({
     )
   }
   const data = searchData.data?.data
+
+  const currentAvatar = AVATARS.find(
+    (item) => item.name === data.createdBy.image
+  )
 
   if (hidden) return null
 
@@ -393,6 +398,10 @@ export function WordView({
           ) : (
             <div className="flex items-center gap-3">
               <Avatar>
+                <AvatarImage
+                  src={currentAvatar?.image}
+                  alt={data.createdBy.name}
+                />
                 <AvatarFallback>
                   {firstLetterBuilder(data.createdBy.name)}
                 </AvatarFallback>
@@ -608,9 +617,11 @@ function CommentForm({
         </form.Subscribe>
 
         <div className="flex gap-3">
-          <form.Subscribe selector={(state) => [state.isSubmitting]}>
-            {([isSubmitting]) => (
-              <Button type="submit">
+          <form.Subscribe
+            selector={(state) => [state.isSubmitting, state.isDirty]}
+          >
+            {([isSubmitting, isDirty]) => (
+              <Button variant={isDirty ? 'default' : 'secondary'} type="submit">
                 {isSubmitting && <Spinner size={'xs'} className="mr-3" />}
                 {isUpdated ? 'Update comment' : 'Post comment'}
               </Button>
