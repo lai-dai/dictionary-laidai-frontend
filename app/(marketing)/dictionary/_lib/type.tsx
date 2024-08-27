@@ -19,4 +19,8 @@ export type DictionaryAttr = {
       translate: string
     }[]
   }[]
+  relationship: {
+    id: number
+    word: string
+  }[]
 }

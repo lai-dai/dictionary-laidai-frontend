@@ -12,13 +12,10 @@ import { CreateAndUpdateCard } from '../_components/card'
 import { Spinner } from '@/components/ui/spinner'
 import { Message } from '@/components/message'
 import { getErrorMessage } from '@/lib/utils/error-message'
-import { useRouter } from 'next/navigation'
 import { apiWithToken } from '@/lib/api'
 import { Center } from '@/components/ui/center'
 
 export default function Page({ params }: { params: { id: string } }) {
-  const router = useRouter()
-
   const searchData = useQuery<ResFindOne<AttrType>>({
     queryKey: [QUERY_KEYS.words, params.id],
     queryFn: () =>
@@ -41,12 +38,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
             </Center>
           ) : (
-            <WordForm
-              id={params.id}
-              defaultValues={searchData.data?.data}
-              onSubmitCreateSuccess={() => router.back()}
-              onSubmitUpdateSuccess={() => router.back()}
-            />
+            <WordForm id={params.id} defaultValues={searchData.data?.data} />
           )}
         </CreateAndUpdateCard>
       </main>

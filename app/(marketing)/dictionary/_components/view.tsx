@@ -151,6 +151,28 @@ export function SearchDictionary({
                       </CardHeader>
 
                       <CardContent className="p-2">
+                        {item.relationship.length > 0 && (
+                          <div className="space-x-3 text-sm">
+                            <span>View:</span>
+                            {item.relationship.map((itm) => (
+                              <Button
+                                key={itm.id}
+                                size={'sm'}
+                                variant={'secondary'}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  if (inDialog) {
+                                    router.replace('/word/' + itm.word)
+                                  } else {
+                                    router.push('/word/' + itm.word)
+                                  }
+                                }}
+                              >
+                                {itm.word}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
                         {item.meanings.length > 0 &&
                           item.meanings[0].definitions.length > 0 && (
                             <p className="line-clamp-3 prose prose-slate dark:prose-invert prose-sm">
