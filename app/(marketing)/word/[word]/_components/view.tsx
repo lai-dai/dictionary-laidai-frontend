@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import {
   AlertCircle,
   AudioLines,
+  Edit2,
   EllipsisVertical,
   NotebookPen,
   TextQuote,
@@ -152,6 +153,18 @@ export function WordView({
         <div className="flex items-center justify-between gap-6">
           <CardTitle>
             <Link href={`/word/${word}`}>{data.word}</Link>
+            {session?.user.role === 'admin' && (
+              <Button
+                asChild
+                variant={'secondary'}
+                size={'icon'}
+                className="size-8 ml-3"
+              >
+                <Link target="_blank" href={`/dashboard/words/${data.id}`}>
+                  <Edit2 className="size-4" />
+                </Link>
+              </Button>
+            )}
           </CardTitle>
 
           <Button
@@ -208,7 +221,7 @@ export function WordView({
         )}
       </CardHeader>
 
-      <CardContent className="p-2 md:px-4 md:pb-4 space-y-6">
+      <CardContent className="px-2 pb-2 md:px-4 md:pb-4 space-y-6">
         {data.relationship.length > 0 && (
           <Card className="shadow-none">
             <CardHeader className="p-2 md:p-4">
@@ -247,14 +260,14 @@ export function WordView({
             <Card className="shadow-none">
               <CardHeader className="p-2 md:p-4">
                 <CardTitle title="meanings" className="font-semibold">
-                  Meanings:{' '}
+                  Meaning:{' '}
                 </CardTitle>
               </CardHeader>
               {data.meanings.map((item) => {
                 return (
                   <CardContent
                     key={item.id}
-                    className="space-y-3 p-2 md:px-4 md:pb-4"
+                    className="space-y-3 px-2 pb-2 md:px-4 md:pb-4"
                   >
                     <h4 className="space-x-1.5">
                       <Badge>{item.partOfSpeech.name || '-'}</Badge>
@@ -279,7 +292,7 @@ export function WordView({
                       </Alert>
                     )}
 
-                    <ol className="list-decimal pl-4">
+                    <ol className="list-decimal pl-4 space-y-2">
                       {item.definitions.length > 0 &&
                         item.definitions.map((itm, idx) => {
                           return (
@@ -350,7 +363,7 @@ export function WordView({
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="p-2 md:px-4 md:pb-4">
+            <CardContent className="px-2 pb-2 md:px-4 md:pb-4">
               <ul className="list-decimal pl-4 space-y-1">
                 {data.idioms.map((item) => {
                   return (
@@ -455,7 +468,7 @@ export function CommentsView({ word }: { word: string }) {
         <CardTitle>Discussion</CardTitle>
       </CardHeader>
 
-      <CardContent className="p-2 md:px-4 md:pb-4">
+      <CardContent className="px-2 pb-2 md:px-4 md:pb-4">
         <section className="antialiased space-y-6">
           <CommentForm
             wordId={searchWord.data?.data.id}

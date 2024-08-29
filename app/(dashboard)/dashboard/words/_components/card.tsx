@@ -15,9 +15,11 @@ import React, { ReactNode } from 'react'
 export function CreateAndUpdateCard({
   children,
   isCreated,
+  word,
 }: {
   children: ReactNode
   isCreated?: boolean
+  word?: string
 }) {
   const router = useRouter()
   return (
@@ -28,7 +30,9 @@ export function CreateAndUpdateCard({
             <ArrowLeft size={18} className="mr-3" /> Back
           </Button>
           <div>
-            <CardTitle>{isCreated ? 'Create' : 'Update'} Word</CardTitle>
+            <CardTitle>
+              {isCreated ? 'Create' : 'Update'} Word {word ? ': ' + word : ''}
+            </CardTitle>
             <CardDescription></CardDescription>
           </div>
         </div>

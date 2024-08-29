@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { DashboardPageContainer } from '@/components/page-container'
 import { WordForm } from '../_components/form'
 import { useQuery } from '@tanstack/react-query'
@@ -14,6 +14,7 @@ import { Message } from '@/components/message'
 import { getErrorMessage } from '@/lib/utils/error-message'
 import { apiWithToken } from '@/lib/api'
 import { Center } from '@/components/ui/center'
+import { siteConfig } from '@/config/site'
 
 export default function Page({ params }: { params: { id: string } }) {
   const searchData = useQuery<ResFindOne<AttrType>>({
@@ -25,10 +26,16 @@ export default function Page({ params }: { params: { id: string } }) {
     enabled: !Number.isNaN(+params.id),
   })
 
+  useEffect(() => {
+    if (searchData.status === 'success') {
+      document.title = searchData.data.data.word + ' - ' + siteConfig.name
+    }
+  }, [searchData.status])
+
   return (
     <DashboardPageContainer asChild>
       <main>
-        <CreateAndUpdateCard>
+        <CreateAndUpdateCard word={searchData.data?.data.word}>
           {searchData.status === 'pending' ? (
             <Center>
               <Spinner />
@@ -38,7 +45,13 @@ export default function Page({ params }: { params: { id: string } }) {
               <Message.Error>{getErrorMessage(searchData.error)}</Message.Error>
             </Center>
           ) : (
-            <WordForm id={params.id} defaultValues={searchData.data?.data} />
+            <WordForm
+              id={params.id}
+              defaultValues={searchData.data?.data}
+              onSubmitUpdateSuccess={() => {
+                searchData.refetch()
+              }}
+            />
           )}
         </CreateAndUpdateCard>
       </main>
