@@ -247,7 +247,7 @@ export function PartOfSpeechesForm({
 
           <div className="flex justify-end gap-3">
             {inModal && (
-              <Button onClick={onClose} variant="outline">
+              <Button tabIndex={-1} onClick={onClose} variant="outline">
                 Cancel
               </Button>
             )}

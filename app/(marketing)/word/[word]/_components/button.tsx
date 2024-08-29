@@ -12,7 +12,7 @@ import { AttrType } from '@/app/(dashboard)/dashboard/words/_lib/type'
 import { Spinner } from '@/components/ui/spinner'
 
 export function AddButton({ word }: { word: string }) {
-  const router = useRouter()
+  // const router = useRouter()
 
   const createData = useMutation({
     mutationFn: (data: any) =>
@@ -29,7 +29,9 @@ export function AddButton({ word }: { word: string }) {
               toast.error(getErrorMessage(error, 'Error'))
             },
             onSuccess(data, variables, context) {
-              router.push(`/dashboard/words/${data.data.id}`)
+              const url = `/dashboard/words/${data.data.id}`
+              window.open(url, '_blank')?.focus()
+              // router.push(`/dashboard/words/${data.data.id}`)
               toast.success('Create successfully')
             },
           }

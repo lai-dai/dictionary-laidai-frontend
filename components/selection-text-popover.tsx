@@ -15,6 +15,7 @@ import { isMobile } from './device-detect'
 import { WordView } from '@/app/(marketing)/word/[word]/_components/view'
 import { usePathname } from 'next/navigation'
 import { Card } from './ui/card'
+import { Drawer, DrawerContent } from './ui/drawer'
 
 export function SelectionTextPopover() {
   const [open, setOpen] = useState(false)
@@ -99,6 +100,24 @@ export function SelectionTextPopover() {
       }
     }
   }, [refs])
+
+  if (isMobile) {
+    return (
+      <Drawer open={open}>
+        <DrawerContent className="max-h-[90vh] overflow-y-auto">
+          <WordView
+            key={key}
+            word={key.toLowerCase()}
+            enabled={true}
+            staleTime={0}
+            gcTime={0}
+            queryKey={['floating', key]}
+            className={'border-0'}
+          />
+        </DrawerContent>
+      </Drawer>
+    )
+  }
 
   return (
     open && (

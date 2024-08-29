@@ -67,6 +67,11 @@ export function getMenuList(pathname: string): Group[] {
               label: 'New Word',
               active: pathname === '/dashboard/words/create',
             },
+            {
+              href: '/dashboard/words/editor',
+              label: 'View Editor',
+              active: pathname === '/dashboard/words/editor',
+            },
           ],
         },
         {
