@@ -309,6 +309,7 @@ export function MeaningsDataTable({
                 <CreateUpdateDataDialog
                   isCreated
                   onSubmitSuccess={() => {
+                    table.resetExpanded()
                     searchData.refetch()
                   }}
                   defaultValues={{

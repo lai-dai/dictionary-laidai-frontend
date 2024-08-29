@@ -318,6 +318,7 @@ export function IdiomsDataTable({
                 <CreateUpdateDataDialog
                   isCreated
                   onSubmitSuccess={() => {
+                    table.resetExpanded()
                     searchData.refetch()
                   }}
                   defaultValues={{

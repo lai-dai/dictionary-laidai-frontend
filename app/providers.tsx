@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import Link from 'next/link'
 import { SelectionTextPopover } from '@/components/selection-text-popover'
+import { useRouter } from 'next/navigation'
 
 export function Providers({ children }: { children?: React.ReactNode }) {
   const [queryClient] = React.useState(
@@ -52,6 +53,7 @@ export function Providers({ children }: { children?: React.ReactNode }) {
 }
 
 function AuthAlert() {
+  const router = useRouter()
   const { data: session } = useSession()
 
   return (
@@ -69,22 +71,20 @@ function AuthAlert() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction asChild>
-              <Link
-                href={
+            <AlertDialogAction
+              onClick={async () => {
+                await signOut({
+                  callbackUrl:
+                    window.location.pathname + window.location.search,
+                })
+                router.push(
                   '/login?callbackUrl=' +
-                  window.location.pathname +
-                  window.location.search
-                }
-                onClick={() => {
-                  signOut({
-                    callbackUrl:
-                      window.location.pathname + window.location.search,
-                  })
-                }}
-              >
-                Login
-              </Link>
+                    window.location.pathname +
+                    window.location.search
+                )
+              }}
+            >
+              Login
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

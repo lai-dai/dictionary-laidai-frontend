@@ -133,7 +133,7 @@ export function PhoneticsForm({
               Auto generator
             </Button>
             <p className="text-sm text-muted-foreground">
-              from: https://api.dictionaryapi.dev/api/v2
+              from: {`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`}
             </p>
           </div>
 

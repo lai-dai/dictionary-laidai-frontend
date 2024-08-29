@@ -19,14 +19,14 @@ export function SearchInput({
 }: Omit<InputProps, 'value' | 'defaultValue'> & {
   value?: string
   defaultValue?: string
-  onSearchChange?: (value: string) => void
-  onValueChange?: (value: string) => void
+  onSearchChange?: (value?: string) => void
+  onValueChange?: (value?: string) => void
   classNames?: {
     root?: string
     input?: string
   }
 }) {
-  const [_value, setValue] = useUncontrolled({
+  const [_value, setValue] = useUncontrolled<string | undefined>({
     defaultValue,
     value,
     onValueChange,
@@ -34,14 +34,14 @@ export function SearchInput({
   return (
     <div className={cn('relative', classNames?.root)}>
       <Input
-        value={_value}
+        value={_value || ''}
         onChange={(e) => {
           setValue(e.target.value)
         }}
         onKeyDown={chain(onKeyDown, (e) => {
           if (e.code === 'Enter') {
             e.preventDefault()
-            onSearchChange?.(_value || '')
+            onSearchChange?.(_value || undefined)
           }
         })}
         className={cn('pr-9', classNames?.input, className)}
@@ -50,8 +50,8 @@ export function SearchInput({
       {_value && (
         <Button
           onClick={() => {
-            onSearchChange?.('')
-            setValue('')
+            onSearchChange?.(undefined)
+            setValue(undefined)
           }}
           size={'icon'}
           className="size-4 absolute top-1/2 -translate-y-1/2 right-3"
