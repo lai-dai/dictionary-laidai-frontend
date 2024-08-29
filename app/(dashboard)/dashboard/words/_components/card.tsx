@@ -1,5 +1,6 @@
 'use client'
 
+import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -29,11 +30,11 @@ export function CreateAndUpdateCard({
           <Button onClick={() => router.back()} variant={'outline'}>
             <ArrowLeft size={18} className="mr-3" /> Back
           </Button>
-          <div>
+          <div className="flex gap-3">
             <CardTitle>
               {isCreated ? 'Create' : 'Update'} Word {word ? ': ' + word : ''}
             </CardTitle>
-            <CardDescription></CardDescription>
+            <CopyButton value={word} />
           </div>
         </div>
       </CardHeader>

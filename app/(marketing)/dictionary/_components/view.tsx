@@ -114,7 +114,7 @@ export function SearchDictionary({
           </Center>
         ) : (
           <CommandGroup>
-            <CommandEmpty>
+            <CommandEmpty className="space-y-3">
               <p>No results found.</p>
               {session?.user.role === 'admin' && <AddButton word={key} />}
             </CommandEmpty>
@@ -148,6 +148,9 @@ export function SearchDictionary({
                           <CardDescription>
                             {item.meanings.length > 0 &&
                               item.meanings[0].partOfSpeech.name}
+                            {item.meanings[0].partOfSpeech.translate
+                              ? ' = ' + item.meanings[0].partOfSpeech.translate
+                              : ''}
                           </CardDescription>
                         </div>
                       </CardHeader>

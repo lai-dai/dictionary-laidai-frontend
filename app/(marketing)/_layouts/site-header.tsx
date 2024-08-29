@@ -29,7 +29,15 @@ export async function SiteHeader() {
           <UserNav />
         ) : (
           <Button asChild>
-            <Link href={'/login'}>{t('Login')}</Link>
+            <Link
+              href={
+                '/login?callbackUrl=' +
+                window.location.pathname +
+                window.location.search
+              }
+            >
+              {t('Login')}
+            </Link>
           </Button>
         )}
       </div>

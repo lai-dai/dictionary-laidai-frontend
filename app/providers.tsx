@@ -15,7 +15,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import Link from 'next/link'
 import { SelectionTextPopover } from '@/components/selection-text-popover'
 import { useRouter } from 'next/navigation'
 
@@ -27,7 +26,6 @@ export function Providers({ children }: { children?: React.ReactNode }) {
           queries: {
             retry: false,
             refetchOnWindowFocus: false,
-            staleTime: 5000,
           },
         },
       })

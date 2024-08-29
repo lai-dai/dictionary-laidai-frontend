@@ -12,6 +12,7 @@ export type DictionaryAttr = {
     partOfSpeech: {
       id: number
       name: string
+      translate: string
     }
     definitions: {
       id: number

@@ -12,17 +12,21 @@ import { LogoutButton } from '@/components/logout-button'
 import { firstLetterBuilder } from '@/lib/utils/first-letter-builder'
 import { Spinner } from '@/components/ui/spinner'
 import { LogOut } from 'lucide-react'
+import { AVATARS } from '@/lib/data/avatars'
 
 export async function DashboardUserNav() {
   const session = await auth()
+  const currentAvatar = AVATARS.find(
+    (item) => item.name === session?.user.image
+  )
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={session?.user?.image || ''}
-              alt={`@${session?.user?.name}`}
+              src={currentAvatar?.image}
+              alt={session?.user?.name || ''}
             />
             <AvatarFallback>
               {firstLetterBuilder(session?.user?.name)}

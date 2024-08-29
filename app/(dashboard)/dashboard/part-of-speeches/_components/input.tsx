@@ -93,7 +93,7 @@ export function PartOfSpeechInput({
           </Button>
         </FormControl>
       </PopoverTrigger>
-      <PopoverContent align="start" className="p-0">
+      <PopoverContent align="start" className="p-0 w-96">
         <PartOfSpeechList
           keyValue={key}
           onKeyValueChange={setKey}
