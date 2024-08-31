@@ -4,14 +4,12 @@ import { MobileNav } from './nav-mobile'
 import { LocaleToggle } from '@/components/locale-toggle'
 import { UserNav } from './nav-user'
 import { auth } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
-import { getTranslations } from 'next-intl/server'
-import Link from 'next/link'
 import { ModeToggle } from '@/components/mode-toggle'
+import { LoginButton } from './login-button'
 
 export async function SiteHeader() {
   const session = await auth()
-  const t = await getTranslations()
+
   return (
     <header
       id="site-header"
@@ -25,21 +23,7 @@ export async function SiteHeader() {
 
         <LocaleToggle />
         <ModeToggle />
-        {session?.user ? (
-          <UserNav />
-        ) : (
-          <Button asChild>
-            <Link
-              href={
-                '/login?callbackUrl=' +
-                window.location.pathname +
-                window.location.search
-              }
-            >
-              {t('Login')}
-            </Link>
-          </Button>
-        )}
+        {session?.user ? <UserNav /> : <LoginButton />}
       </div>
     </header>
   )
